@@ -1,0 +1,3219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Adimension Codex Editoris | #IJCVI - the International Journal of Cardiovascular Imaging">
+  <!-- Altmetric meta tag -->
+  <meta name="twitter:card" content="summary">
+  <title>The Adimension | Codex Editoris #IJCVI</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary-color: #b00000;
+      --secondary-color: #b30000;
+      --accent-color: #c50b0b;
+      --light-bg: #f8f9fa;
+      --dark-bg: #9f0a0a;
+      --text-color: #333;
+      --light-text: #f5f5f5;
+      --border-radius: 0;
+      --box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --spacing-xs: 0.15rem;
+      --spacing-sm: 0.25rem;
+      --spacing-md: 0.5rem;
+      --spacing-lg: 0.75rem;
+      --font-size-base: 0.875rem;
+      --font-size-sm: 0.8rem;
+      --font-size-xs: 0.7rem;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+      --line-height: 1.5;
+      --header-height: 60px;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: var(--line-height);
+      color: var(--text-color);
+      background-color: #f5f5f5;
+      font-size: var(--font-size-base);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Typography - standardized across the application */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.2;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+    
+    h2 {
+      font-size: 1.1rem;
+    }
+    
+    h3 {
+      font-size: 1rem;
+    }
+    
+    h4, h5 {
+      font-size: var(--font-size-base);
+    }
+    
+    h6 {
+      font-size: var(--font-size-sm);
+    }
+    
+    p {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .lead {
+      font-size: 0.9rem;
+      font-weight: var(--font-weight-normal);
+      opacity: 0.9;
+    }
+    
+    /* Header styles - unified with offcanvas */
+    .app-header {
+      background: var(--dark-bg);
+      color: white;
+      padding: var(--spacing-xs) 0;
+      box-shadow: var(--box-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      min-height: var(--header-height);
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    
+    /* Hyperlink styles for dark backgrounds */
+    .app-header a, footer a, .bg-dark a, .bg-dark-opacity-75 a, [class*="bg-secondary"] a {
+      color: #a4e4fd;
+      text-decoration: none;
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition);
+    }
+    
+    .app-header a:hover, footer a:hover, .bg-dark a:hover, .bg-dark-opacity-75 a:hover, [class*="bg-secondary"] a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    
+    /* Logo container styles */
+    .logo-container {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 15px 0 0;
+      margin-right: 0;
+      float: left;
+    }
+    
+    .logo-container a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      text-decoration: none !important;
+    }
+    
+    .logo-container svg {
+      height: 48px;
+      width: auto;
+      transition: transform 0.3s ease;
+      margin-right: 10px;
+    }
+    
+    .logo-container a:hover svg {
+      transform: scale(1.1);
+    }
+    
+    .app-header h1 {
+      font-size: 1.5rem;
+      font-weight: var(--font-weight-bold);
+      margin-bottom: 0;
+      letter-spacing: -0.01em;
+      white-space: normal; /* Changed from nowrap to allow wrapping */
+      overflow: visible; /* Changed from hidden */
+      text-overflow: clip; /* Changed from ellipsis */
+    }
+    
+    .app-header .lead {
+      font-size: 0.9rem;
+      font-weight: var(--font-weight-normal);
+      white-space: normal; /* Changed from nowrap to allow wrapping */
+      overflow: visible; /* Changed from hidden */
+      text-overflow: clip; /* Changed from ellipsis */
+    }
+    
+    /* Updated responsive styles */
+    @media (max-width: 767px) {
+      .app-header h1 {
+        font-size: 1.3rem;
+      }
+      .app-header .lead {
+        font-size: 0.8rem;
+        display: block !important; /* Ensure lead is always visible on all screen sizes */
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .app-header h1 {
+        font-size: 1.1rem;
+      }
+      .app-header .lead {
+        font-size: 0.75rem;
+      }
+    }
+    
+    /* Offcanvas styling - unified with header */
+    .offcanvas {
+      max-width: 400px;
+    }
+    
+    .offcanvas-header {
+      background-color: var(--dark-bg);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .offcanvas-title {
+      font-weight: var(--font-weight-semibold);
+      font-size: 1.1rem;
+    }
+    
+    /* Container max-width for better readability on large screens */
+    .container {
+      max-width: 1200px;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    
+    /* More compact margins for content */
+    .row {
+      margin-left: -0.3rem;
+      margin-right: -0.3rem;
+    }
+    
+    .col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, 
+    .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12,
+    .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12,
+    .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+      padding-left: 0.3rem;
+      padding-right: 0.3rem;
+    }
+    
+    .mb-4 {
+      margin-bottom: 0.5rem !important;
+    }
+    
+    .mb-3 {
+      margin-bottom: 0.3rem !important;
+    }
+    
+    .mb-2 {
+      margin-bottom: 0.2rem !important;
+    }
+    
+    /* Article card styles */
+    .article-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: var(--spacing-sm);
+      overflow: hidden;
+      transition: var(--transition);
+      border: none;
+      padding-bottom: 2rem;
+      border-bottom: 3px solid #a80505;
+    }
+    
+    .article-card:last-child {
+      border-bottom: none;
+    }
+    
+    .article-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .article-header {
+      padding: var(--spacing-xs) var(--spacing-md);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      background-color: #f9f9fa;
+    }
+    
+    .article-header h2 {
+      color: var(--dark-bg);
+      font-size: 1.1rem;
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+    }
+    
+    .article-header h3 {
+      font-size: 1rem;
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: 0;
+      color: var(--dark-bg);
+    }
+    
+    .article-body {
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .article-footer {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background-color: var(--light-bg);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Button styles - unifying with header buttons */
+    .btn {
+      border-radius: var(--border-radius);
+      padding: 0.2rem 0.5rem;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition);
+    }
+    
+    .btn-sm {
+      padding: 0.15rem 0.4rem;
+      font-size: var(--font-size-xs);
+    }
+    
+    .btn-primary {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: #dd0000;
+      border-color: #d70606;
+    }
+    
+    .btn-outline-primary {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+    
+    /* Form controls - cleaner look */
+    .form-control, .input-group-text {
+      padding: 0.2rem 0.5rem;
+      font-size: var(--font-size-sm);
+      border-radius: var(--border-radius);
+      border: 1px solid #dee2e6;
+    }
+    
+    .input-group-text {
+      background-color: var(--light-bg);
+    }
+    
+    /* Form switches - more modern */
+    .form-switch .form-check-input {
+      width: 2.5em;
+      height: 1.25em;
+    }
+    
+    .form-switch .form-check-input:checked {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    
+    /* Toast styling */
+    .toast {
+      border-radius: var(--border-radius);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      border: none;
+    }
+    
+    .toast-header {
+      background-color: var(--accent-color);
+      color: white;
+      border-bottom: none;
+    }
+    
+    .toast-header .btn-close {
+      filter: brightness(0) invert(1);
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1a1a1a;
+        color: var(--light-text);
+      }
+      
+      .article-card, .controls-panel {
+        background-color: #2a2a2a;
+        color: var(--light-text);
+      }
+      
+      .article-footer, .abstract-container {
+        background-color: #232323;
+      }
+      
+      .article-header {
+        background-color: #2d2d2d;
+      }
+      
+      .article-header h2,
+      .article-header h3 {
+        color: var(--light-text);
+      }
+    }
+    
+    /* Loading spinner */
+    .loading-spinner {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.25rem;
+      color: var(--accent-color);
+    }
+    
+    /* Better typography for article elements */
+    .article-header h2 {
+      color: var(--dark-bg);
+      font-size: 1.1rem;
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+    }
+    
+    /* Badge styles */
+    .badge {
+      font-weight: var(--font-weight-medium);
+      padding: 0.2em 0.5em;
+      border-radius: var(--border-radius);
+    }
+    
+    .badge-oa {
+      background-color: #c1f8ce;
+      color: #155724;
+    }
+    
+    /* Author badge styling */
+    .author-badge {
+      display: inline-flex;
+      align-items: center;
+      background-color: #f8f9fa;
+      border-radius: var(--border-radius);
+      padding: 0.3rem;
+      margin: 0.15rem;
+      transition: var(--transition);
+    }
+    
+    .author-badge:hover {
+      background-color: #e9ecef;
+      transform: translateY(-2px);
+    }
+    
+    .author-badge .social-link {
+      margin-left: 0.5rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+    
+    .author-badge .social-link:hover {
+      opacity: 1;
+    }
+    
+    .social-link.linkedin {
+      color: #0077b5;
+    }
+    
+    .social-link.twitter {
+      color: #000000;
+    }
+    
+    /* Improved collapsible sections */
+    .collapsible-section {
+      margin-bottom: 0.3rem;
+      cursor: pointer;
+    }
+    
+    .collapse-toggle {
+      width: 100%;
+      text-align: left;
+      position: relative;
+      padding: 0.3rem 0.6rem;
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      transition: all 0.2s ease;
+      border-radius: var(--border-radius);
+      font-weight: var(--font-weight-medium);
+    }
+    
+    .collapse-toggle:hover {
+      background-color: #890000;
+    }
+    
+    .collapse-toggle .icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform 0.2s;
+    }
+    
+    .collapse-toggle[aria-expanded="true"] .icon {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    
+    /* Abstract and content containers */
+    .abstract-container {
+      background-color: #f8f9fa;
+      border-radius: var(--border-radius);
+      padding: 0.5rem;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.4;
+      border-left: 3px solid var(--accent-color);
+    }
+    
+    /* Social post styling */
+    .social-post {
+      background-color: white;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--accent-color);
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      font-style: italic;
+      line-height: 1.4;
+      transition: var(--transition);
+    }
+    
+    .social-post:hover {
+      background-color: #f8f9fa;
+    }
+    
+    /* Badge containers */
+    .badges-container {
+      padding: 1rem 0;
+    }
+    
+    .badges-container .card-body {
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Individual badge styles */
+    .dimensions-badge, .altmetric-badge, .scite-badge {
+      width: 100%;
+      min-height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Specific styling for PlumX details summary widget */
+    .plumx-details-badge {
+      width: 100%;
+      min-height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .plumx-details-badge a {
+      width: 100%;
+    }
+    
+    /* Metadata display */
+    .metadata-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .metadata-item {
+      display: inline-flex;
+      align-items: center;
+      background-color: var(--light-bg);
+      border-radius: var(--border-radius);
+      padding: 0.2rem 0.4rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+    
+    .metadata-item:hover {
+      background-color: #e9ecef;
+    }
+    
+    .metadata-label {
+      font-weight: var(--font-weight-medium);
+      margin-right: 0.5rem;
+      color: var(--accent-color);
+    }
+    
+    /* Citation styles */
+    .citation-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .citation-list li {
+      padding: 0.5rem;
+      margin-bottom: 0.4rem;
+      border-radius: var(--border-radius);
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+    
+    .citation-list li:hover {
+      background-color: #f8f9fa;
+      transform: translateX(3px);
+    }
+    
+    .citation-title {
+      font-weight: var(--font-weight-semibold);
+      color: var(--dark-bg);
+      margin-bottom: 0.25rem;
+    }
+    
+    .citation-authors {
+      font-style: italic;
+      margin-bottom: 0.25rem;
+    }
+    
+    .citation-journal {
+      font-weight: var(--font-weight-medium);
+      color: var(--accent-color);
+    }
+    
+    .citation-link {
+      color: var(--primary);
+      font-size: var(--font-size-sm);
+      text-decoration: none;
+    }
+    
+    .citation-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Improved responsive adjustments */
+    @media (max-width: 768px) {
+      .article-header h2 {
+        font-size: 1rem;
+      }
+      
+      .metadata-row {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      
+      .metadata-item {
+        width: 100%;
+      }
+      
+      .abstract-container {
+        max-height: 250px;
+      }
+    }
+    
+    /* Dark mode support for new elements */
+    @media (prefers-color-scheme: dark) {
+      .collapse-toggle {
+        background-color: #2d2d2d;
+        border-color: #333;
+      }
+      
+      .collapse-toggle:hover {
+        background-color: #333;
+      }
+      
+      .abstract-container {
+        background-color: #2a2a2a;
+        border-left-color: var(--accent-color);
+      }
+      
+      .social-post {
+        background-color: #2a2a2a;
+      }
+      
+      .social-post:hover {
+        background-color: #333;
+      }
+      
+      .author-badge {
+        background-color: #2d2d2d;
+      }
+      
+      .author-badge:hover {
+        background-color: #333;
+      }
+      
+      .metadata-item {
+        background-color: #2d2d2d;
+        border-color: #444;
+      }
+      
+      .metadata-item:hover {
+        background-color: #333;
+      }
+      
+      .citation-list li {
+        background-color: #2a2a2a;
+        border-color: #444;
+      }
+      
+      .citation-list li:hover {
+        background-color: #333;
+      }
+      
+      .offcanvas {
+        background-color: #222 !important;
+      }
+      
+      .offcanvas-header {
+        border-bottom-color: rgba(255,255,255,0.1);
+      }
+    }
+    
+    /* Toast notifications */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+    }
+    
+    .toast {
+      min-width: 250px;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      margin-bottom: 0.75rem;
+    }
+    
+    .toast.show {
+      opacity: 1;
+    }
+    
+    /* Row spacing */
+    .row.mb-3 {
+      margin-bottom: 0.3rem !important;
+    }
+    
+    /* Compact the expand sections */
+    .p-3 {
+      padding: 0.5rem !important;
+    }
+    
+    /* Reduce tab padding */
+    .nav-link {
+      padding: 0.2rem 0.4rem !important;
+      font-weight: var(--font-weight-medium);
+    }
+    
+    .tab-content {
+      padding-top: 0.3rem;
+    }
+    
+    /* More compact card headers and layout styles for the social handles section */
+    .card-header {
+      padding: 0.3rem 0.5rem;
+      border-radius: var(--border-radius) !important;
+    }
+    
+    .card-body {
+      padding: 0.5rem;
+    }
+    
+    /* Alert more compact */
+    .alert {
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.5rem;
+      border-radius: var(--border-radius);
+    }
+    
+    /* Alert contrast improvements */
+    .alert-info {
+      background-color: #cff4fc;
+      border-color: #b6effb;
+      color: #055160;
+    }
+    
+    .alert-secondary {
+      background-color: #e2e3e5;
+      border-color: #d3d6d8;
+      color: #41464b;
+    }
+    
+    /* Alerts in dark backgrounds */
+    .bg-dark .alert-info, 
+    .bg-dark-opacity-75 .alert-info {
+      background-color: rgba(207, 244, 252, 0.9);
+      border-color: rgba(182, 239, 251, 0.9);
+      color: #055160;
+    }
+    
+    /* Add no border radius to all possible components */
+    .card, .input-group-text, .form-control, .dropdown-menu, .toast, 
+    .dropdown-item:first-child, .dropdown-item:last-child,
+    .input-group > .form-control:not(:last-child),
+    .input-group > .form-control:not(:first-child),
+    .toast-header, .form-check-input {
+      border-radius: var(--border-radius) !important;
+    }
+    
+    /* Toast positioning */
+    #toast-container {
+      bottom: 10px;
+      right: 10px;
+    }
+    
+    /* More compact badges container */
+    .badges-container {
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+    }
+    
+    /* Footer styling to match header */
+    footer {
+      background-color: var(--dark-bg);
+      color: white;
+      padding: 1rem 0;
+      font-size: var(--font-size-sm);
+    }
+    
+    footer h5 {
+      font-size: 1rem;
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    footer a {
+      color: #b6eaff;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    footer a:hover {
+      color: #ffffff;
+    }
+    
+    /* Sticky Filter Bar */
+    .filter-bar {
+      background-color: #f0f2f5;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: calc(var(--header-height) + 40px); /* Adjusted to better account for display bar height */
+      z-index: 998; /* One less than display bar */
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .filter-bar.show {
+      display: block !important;
+    }
+    
+    /* Display Options Bar */
+    .display-bar {
+      background-color: #e8eaee;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: var(--header-height);
+      z-index: 999;
+      transition: all 0.3s ease;
+      padding: 5px 0; /* Reduced padding for more compact display */
+      border-bottom: 1px solid #ccc;
+      width: 100%;
+    }
+    
+    .display-bar .form-check-label {
+      font-size: var(--font-size-sm);
+    }
+    
+    .display-bar .form-check-input {
+      cursor: pointer;
+    }
+    
+    /* Dark mode for filter bar */
+    @media (prefers-color-scheme: dark) {
+      .filter-bar {
+        background-color: #2a2a2a;
+      }
+      
+      .filter-bar h6 {
+        color: #aaa !important;
+      }
+      
+      .filter-bar .form-control {
+        background-color: #333 !important;
+        color: var(--light-text) !important;
+        border-color: #444 !important;
+      }
+      
+      .filter-bar .btn-outline-secondary {
+        color: var(--light-text);
+        border-color: #444;
+      }
+      
+      .display-bar {
+        background-color: #252525;
+        border-bottom: 1px solid #444;
+      }
+      
+      .display-bar h6 {
+        color: #aaa !important;
+      }
+      
+      .display-bar .form-check-label {
+        color: var(--light-text);
+      }
+    }
+    
+    /* Social Media Sharing Buttons */
+    .social-share-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    
+    .social-share-btn {
+      border-radius: 4px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    
+    .social-share-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    
+    .social-share-btn i {
+      margin-right: 0.35rem;
+    }
+    
+    /* Mobile optimization for social buttons */
+    @media (max-width: 576px) {
+      .social-share-buttons {
+        gap: 0.3rem;
+      }
+      
+      .social-share-btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      .social-share-btn span {
+        display: none;
+      }
+      
+      .social-share-btn i, .social-share-btn svg {
+        margin-right: 0;
+      }
+    }
+    
+    /* Social media platform colors */
+    .btn-twitter {
+      background-color: #000000; /* Changed from Twitter blue to black for X */
+    }
+    
+    .btn-facebook {
+      background-color: #4267B2;
+    }
+    
+    .btn-linkedin {
+      background-color: #0077B5;
+    }
+    
+    .btn-reddit {
+      background-color: #FF4500;
+    }
+    
+    .btn-email {
+      background-color: #505050;
+    }
+    
+    /* Dark mode for social sharing buttons */
+    @media (prefers-color-scheme: dark) {
+      .social-share-btn {
+        opacity: 0.9;
+      }
+      
+      .social-share-btn:hover {
+        opacity: 1;
+      }
+    }
+    
+    /* Responsive styles */
+  </style>
+  <!-- External badge scripts will be loaded dynamically -->
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container">
+      <!-- Main Header Row -->
+      <div class="row align-items-center py-2">
+        <div class="col-md-6 col-8">
+          <div class="d-flex align-items-center">
+            <div class="logo-container">
+              <a href="https://www.theadimension.com" target="_blank" rel="noopener" title="Visit The Adimension">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    width="100%" viewBox="0 0 1024 1024" enable-background="new 0 0 1024 1024" xml:space="preserve">
+                  <path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+                    d="
+                  M512.859375,209.160416 
+                    C529.632812,209.727448 539.789062,219.549484 547.678894,232.456696 
+                    C559.146973,251.217575 570.396362,270.112152 581.729309,288.955566 
+                    C615.642822,345.343872 649.559875,401.730042 683.456787,458.128326 
+                    C692.637634,473.403534 701.762268,488.712616 710.879211,504.026062 
+                    C711.696594,505.399017 713.019165,506.656494 712.509155,508.561798 
+                    C711.057251,509.767090 709.327332,509.325653 707.727295,509.327850 
+                    C682.399902,509.362915 657.072144,509.296265 631.745361,509.429688 
+                    C628.151855,509.448608 625.990234,508.299744 624.135681,505.177917 
+                    C589.170532,446.320740 554.111084,387.519531 519.057983,328.714630 
+                    C516.111633,323.771729 513.070496,318.885254 509.580414,313.164612 
+                    C503.436432,323.459930 497.810425,332.856812 492.213470,342.270966 
+                    C452.801636,408.561981 413.396240,474.856750 373.987915,541.149780 
+                    C360.114929,564.487000 346.212860,587.807068 332.402100,611.181091 
+                    C330.840790,613.823547 329.195526,615.451050 325.803741,615.436279 
+                    C300.643433,615.326721 275.482391,615.387695 250.321564,615.376343 
+                    C249.530319,615.375977 248.739151,615.172668 248.085602,615.082825 
+                    C247.268921,613.327454 248.305496,612.285095 248.968399,611.182617 
+                    C297.725159,530.090942 346.487030,449.002380 395.258972,367.919891 
+                    C422.820038,322.100067 450.359283,276.267029 477.995270,230.492447 
+                    C485.788757,217.583786 496.740173,209.463943 512.859375,209.160416 
+                  z"/>
+                  <path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+                    d="
+                  M783.456909,624.602051 
+                    C810.674744,669.971558 837.711426,715.024780 864.692139,759.984619 
+                    C862.466370,761.959167 860.552124,761.353699 858.805542,761.357178 
+                    C832.980957,761.409485 807.155945,761.353516 781.331970,761.490112 
+                    C778.125366,761.507080 776.202881,760.634216 774.517761,757.785706 
+                    C751.791687,719.368774 728.943604,681.024048 706.126038,642.661316 
+                    C702.040955,635.793091 697.716125,629.052551 693.961548,622.008118 
+                    C691.654480,617.679443 688.863586,615.938721 683.784668,615.957336 
+                    C629.636841,616.155945 575.488098,616.095459 521.339600,616.103577 
+                    C519.840393,616.103821 518.341248,616.074646 516.842041,616.061401 
+                    C514.336731,616.039185 513.388733,614.818420 513.404724,612.287903 
+                    C513.521301,593.795837 513.609009,575.302795 513.531006,556.810852 
+                    C513.515991,553.253296 515.006042,552.067932 518.275818,552.135925 
+                    C527.100098,552.319580 535.925903,552.543884 544.751160,552.549683 
+                    C603.731384,552.588318 662.711609,552.583923 721.691833,552.556580 
+                    C725.851562,552.554626 730.027100,552.431091 734.166382,552.049988 
+                    C738.363220,551.663574 740.827087,553.374390 742.962769,556.982666 
+                    C756.282349,579.486938 769.814270,601.865540 783.456909,624.602051 
+                  z"/>
+                  <path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+                    d="
+                  M299.961182,665.856934 
+                    C281.702789,696.500183 263.601044,726.805725 245.639999,757.194397 
+                    C243.810791,760.289246 241.789597,761.521362 238.122910,761.494934 
+                    C214.305511,761.322876 190.486267,761.417175 166.667725,761.373596 
+                    C164.575668,761.369812 162.353531,761.893555 160.448959,760.582397 
+                    C159.821136,758.804016 160.953217,757.637939 161.699997,756.393433 
+                    C180.545868,724.987610 199.450439,693.616699 218.194260,662.150146 
+                    C220.076553,658.990173 222.492157,658.555786 225.669159,658.564636 
+                    C247.322250,658.625122 268.975952,658.523682 290.628571,658.635986 
+                    C294.666687,658.656921 298.842133,657.000549 302.836060,659.075806 
+                    C303.062531,661.861694 301.020966,663.456238 299.961182,665.856934 
+                  z"/>
+                </svg>
+              </a>
+            </div>
+            <div>
+              <h1 class="mb-0">The Adimension | Codex Editoris IJCVI</h1>
+              <p class="lead mb-0">Watch <strong><a href="https://www.theadimension.com/Codex-Editoris/TheIJCVI/TheIJCVI-video.mp4" target="_blank" rel="noopener">the video guide.</a></strong><br></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-4 text-end">
+          <button class="btn btn-sm btn-outline-light me-1" type="button" data-bs-toggle="collapse" data-bs-target="#socialHandlesBar" aria-label="Account Handles">
+            <i class="fas fa-at me-1"></i><span>Account Handles</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Social Handles Horizontal Bar -->
+      <div class="collapse mt-2 mb-2" id="socialHandlesBar">
+        <div class="row bg-dark bg-opacity-75 py-3 rounded">
+          <!-- X/Twitter Handles -->
+          <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="mb-0 text-light">
+                <svg width="16" height="16" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2" style="vertical-align: middle;">
+                  <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="currentColor"/>
+                </svg>X / Twitter Handles
+              </h5>
+              <button class="btn btn-sm btn-outline-light" onclick="copyToClipboard('@IJCVImaging @chrisgraeni @RaberLorenz @domcbenz @AnnaGiuliaPavon @SheilaHegde @ShehabAnwer @CE_Guerreiro @ARrosendael @isaacshiri @MarcoGuglielmo @EdoardoConte16 @BFoldyna @albcipri6')" aria-label="Copy Twitter handles">
+                <i class="far fa-copy me-1"></i>Copy All
+              </button>
+            </div>
+            <div style="max-height: 180px; overflow-y: auto;">
+              <p class="card-text">
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@IJCVImaging</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@chrisgraeni</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@RaberLorenz</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@domcbenz</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@AnnaGiuliaPavon</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@SheilaHegde</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@ShehabAnwer</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@CE_Guerreiro</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@ARrosendael</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@isaacshiri</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@MarcoGuglielmo</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@EdoardoConte16</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@BFoldyna</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">@albcipri6</span>
+              </p>
+            </div>
+          </div>
+          <!-- LinkedIn Names -->
+          <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="mb-0 text-light"><i class="fab fa-linkedin me-2"></i>LinkedIn Names</h5>
+              <button class="btn btn-sm btn-outline-light" onclick="copyToClipboard('Prof. Dr. med. Christoph Gräni Anna Giulia Pavon Edoardo Conte MD FESC Sheila Hegde Alexander van Rosendael, MD PhD Thomas Hellmut Schindler Dominik C. Benz Lorenz Räber, MD, PhD, Borek Foldyna MD FSCCT Isaac Shiri Christopher Nguyen, Ph.D., FSCMR, FACC, Shehab Anwer Umang Gupta MD, MBA Mihály Károlyi Bruno B. Hernán Mejía Rentería Vineeta Ojha Francesco Prati Paul Schoenhagen Andreas Schuster Bradley Allen Raymond Kwong North American Society for Cardiovascular Imaging')" aria-label="Copy LinkedIn names">
+                <i class="far fa-copy me-1"></i>Copy All
+              </button>
+            </div>
+            <div style="max-height: 180px; overflow-y: auto;">
+              <p class="card-text">
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Prof. Dr. med. Christoph Gräni</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Anna Giulia Pavon</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Edoardo Conte MD FESC</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Sheila Hegde</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Alexander van Rosendael, MD PhD</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Thomas Hellmut Schindler</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Dominik C. Benz</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Lorenz Räber, MD, PhD,</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Borek Foldyna MD FSCCT</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Isaac Shiri</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Christopher Nguyen, Ph.D., FSCMR, FACC,</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Shehab Anwer</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Umang Gupta MD, MBA</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Mihály Károlyi</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Bruno B.</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Hernán Mejía Rentería</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Vineeta Ojha</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Francesco Prati</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Paul Schoenhagen</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Andreas Schuster</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Bradley Allen</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">Raymond Kwong</span>
+                <span class="badge bg-light text-dark me-1 mb-1 p-1">North American Society for Cardiovascular Imaging</span>
+              </p>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="alert alert-info text-dark mb-0">
+              <i class="fas fa-info-circle me-2"></i>Click "Copy All" to copy the full list of handles for each platform.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Display Options Bar -->
+  <div id="display-options-bar" class="display-bar sticky-top">
+  <div class="container">
+      <div class="row g-2 py-2">
+        <div class="col-12 mb-1 d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 text-muted"><i class="fas fa-th-list me-1"></i>Display Sections</h6>
+          <div class="text-end">
+            <div class="d-flex align-items-center">
+              <div class="input-group me-2" style="width: auto;">
+                <span class="input-group-text bg-secondary text-light" id="articles-count-label">Articles</span>
+                <input type="number" class="form-control" id="articles-count" aria-describedby="articles-count-label" aria-label="Number of articles to display" title="Number of articles to display" placeholder="10" min="1" max="100" value="10" style="width: 70px;">
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="reload-badges-btn" style="display: none;" aria-label="Reload badges" title="Reload badges">
+                <i class="fas fa-sync-alt"></i><span class="d-none d-sm-inline"> Reload Badges</span>
+              </button>
+              <button type="button" class="btn btn-sm btn-primary" onclick="generateHTML()">
+                <i class="fas fa-sync-alt me-1"></i><span class="d-none d-sm-inline">Load Articles</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      <div class="col-12">
+          <form id="field-selection-form">
+            <!-- Hidden mandatory fields -->
+            <input type="hidden" name="fields" value="title">
+            <input type="hidden" name="fields" value="pdf">
+            <input type="hidden" name="fields" value="meta">
+            <input type="hidden" name="fields" value="keywords">
+            <input type="hidden" name="fields" value="authors">
+            <input type="hidden" name="fields" value="social">
+            
+            <div class="d-flex flex-wrap justify-content-start">
+              <div class="me-3 mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="fields" value="abstract" id="field-abstract" checked>
+                  <label class="form-check-label" for="field-abstract">Abstract</label>
+                </div>
+              </div>
+              
+              <div class="me-3 mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="fields" value="conclusions" id="field-conclusions" checked>
+                  <label class="form-check-label" for="field-conclusions">Conclusions</label>
+                </div>
+              </div>
+              
+              <div class="me-3 mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="fields" value="dimensions" id="field-dimensions" checked>
+                  <label class="form-check-label" for="field-dimensions">Dimensions</label>
+                </div>
+              </div>
+              
+              <div class="me-3 mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="fields" value="altmetric" id="field-altmetric" checked>
+                  <label class="form-check-label" for="field-altmetric">Altmetric</label>
+                </div>
+              </div>
+              
+              <div class="me-3 mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="fields" value="plumxDetails" id="field-plumxDetails" checked>
+                  <label class="form-check-label" for="field-plumxDetails">PlumX</label>
+                </div>
+              </div>
+              
+              <div class="me-3 mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="fields" value="sciteBadge" id="field-sciteBadge" checked>
+                  <label class="form-check-label" for="field-sciteBadge">Scite</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Filter Bar -->
+  <div id="sticky-filter-bar" class="filter-bar d-none">
+    <div class="container">
+      <div class="row g-2 py-2">
+        <div class="col-12 mb-1 d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 text-muted"><i class="fas fa-filter me-1"></i>Filter Articles</h6>
+          <div class="text-end">
+            <button type="button" class="btn btn-sm btn-success me-2" onclick="exportArticlesToCSV()" title="Export filtered articles to CSV">
+              <i class="fas fa-file-export me-1"></i><span class="d-none d-sm-inline">Export CSV</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary me-1" onclick="resetFilters()" title="Reset filters">
+              <i class="fas fa-undo me-1"></i><span class="d-none d-sm-inline">Reset</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="applyFilters()">
+              <i class="fas fa-check me-1"></i><span class="d-none d-sm-inline">Apply</span>
+              </button>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="input-group">
+            <span class="input-group-text bg-secondary text-light border-secondary"><i class="fas fa-search"></i></span>
+            <input type="text" id="filter-keyword" class="form-control bg-light border-secondary" placeholder="Filter by keyword...">
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12">
+          <div class="d-flex flex-wrap flex-sm-nowrap gap-2">
+            <div class="input-group">
+              <span class="input-group-text bg-secondary text-light border-secondary"><i class="fas fa-calendar-alt"></i></span>
+              <input type="date" id="filter-start-date" class="form-control bg-light border-secondary" placeholder="From">
+            </div>
+            <div class="input-group">
+              <span class="input-group-text bg-secondary text-light border-secondary"><i class="fas fa-calendar-alt"></i></span>
+              <input type="date" id="filter-end-date" class="form-control bg-light border-secondary" placeholder="To">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <!-- Loading Indicator -->
+    <div id="loading-indicator" class="text-center my-4 d-none">
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border text-primary me-2" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+        <span>Loading articles...</span>
+      </div>
+    </div>
+    
+    <!-- Articles Container -->
+    <div id="articles-container" class="mb-4">
+      <!-- Articles will be rendered here -->
+    </div>
+  </div>
+  
+  <!-- Main Footer -->
+  <footer>
+    <div class="container">
+      <div class="row align-items-center g-0">
+        <div class="col-8 text-md-start text-start">
+          <p class="m-0">The Adimension | Codex Editoris #IJCVI. <br><strong>To AïA</strong> | S. Anwer © The Adimension 2025.</p>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+          <a href="https://www.theadimension.com" target="_blank" rel="noopener" title="Visit The Adimension" style="display: flex; align-items: center; text-decoration: none;">
+            <svg version="1.1" id="Footer_Logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                width="100%" viewBox="0 0 1024 1024" enable-background="new 0 0 1024 1024" xml:space="preserve" style="height: 40px; width: auto; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                <path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+                  d="
+                M512.859375,209.160416 
+                  C529.632812,209.727448 539.789062,219.549484 547.678894,232.456696 
+                  C559.146973,251.217575 570.396362,270.112152 581.729309,288.955566 
+                  C615.642822,345.343872 649.559875,401.730042 683.456787,458.128326 
+                  C692.637634,473.403534 701.762268,488.712616 710.879211,504.026062 
+                  C711.696594,505.399017 713.019165,506.656494 712.509155,508.561798 
+                  C711.057251,509.767090 709.327332,509.325653 707.727295,509.327850 
+                  C682.399902,509.362915 657.072144,509.296265 631.745361,509.429688 
+                  C628.151855,509.448608 625.990234,508.299744 624.135681,505.177917 
+                  C589.170532,446.320740 554.111084,387.519531 519.057983,328.714630 
+                  C516.111633,323.771729 513.070496,318.885254 509.580414,313.164612 
+                  C503.436432,323.459930 497.810425,332.856812 492.213470,342.270966 
+                  C452.801636,408.561981 413.396240,474.856750 373.987915,541.149780 
+                  C360.114929,564.487000 346.212860,587.807068 332.402100,611.181091 
+                  C330.840790,613.823547 329.195526,615.451050 325.803741,615.436279 
+                  C300.643433,615.326721 275.482391,615.387695 250.321564,615.376343 
+                  C249.530319,615.375977 248.739151,615.172668 248.085602,615.082825 
+                  C247.268921,613.327454 248.305496,612.285095 248.968399,611.182617 
+                  C297.725159,530.090942 346.487030,449.002380 395.258972,367.919891 
+                  C422.820038,322.100067 450.359283,276.267029 477.995270,230.492447 
+                  C485.788757,217.583786 496.740173,209.463943 512.859375,209.160416 
+                z"/>
+                <path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+                  d="
+                M783.456909,624.602051 
+                  C810.674744,669.971558 837.711426,715.024780 864.692139,759.984619 
+                  C862.466370,761.959167 860.552124,761.353699 858.805542,761.357178 
+                  C832.980957,761.409485 807.155945,761.353516 781.331970,761.490112 
+                  C778.125366,761.507080 776.202881,760.634216 774.517761,757.785706 
+                  C751.791687,719.368774 728.943604,681.024048 706.126038,642.661316 
+                  C702.040955,635.793091 697.716125,629.052551 693.961548,622.008118 
+                  C691.654480,617.679443 688.863586,615.938721 683.784668,615.957336 
+                  C629.636841,616.155945 575.488098,616.095459 521.339600,616.103577 
+                  C519.840393,616.103821 518.341248,616.074646 516.842041,616.061401 
+                  C514.336731,616.039185 513.388733,614.818420 513.404724,612.287903 
+                  C513.521301,593.795837 513.609009,575.302795 513.531006,556.810852 
+                  C513.515991,553.253296 515.006042,552.067932 518.275818,552.135925 
+                  C527.100098,552.319580 535.925903,552.543884 544.751160,552.549683 
+                  C603.731384,552.588318 662.711609,552.583923 721.691833,552.556580 
+                  C725.851562,552.554626 730.027100,552.431091 734.166382,552.049988 
+                  C738.363220,551.663574 740.827087,553.374390 742.962769,556.982666 
+                  C756.282349,579.486938 769.814270,601.865540 783.456909,624.602051 
+                z"/>
+                <path fill="#FFFFFF" opacity="1.000000" stroke="none" 
+                  d="
+                M299.961182,665.856934 
+                  C281.702789,696.500183 263.601044,726.805725 245.639999,757.194397 
+                  C243.810791,760.289246 241.789597,761.521362 238.122910,761.494934 
+                  C214.305511,761.322876 190.486267,761.417175 166.667725,761.373596 
+                  C164.575668,761.369812 162.353531,761.893555 160.448959,760.582397 
+                  C159.821136,758.804016 160.953217,757.637939 161.699997,756.393433 
+                  C180.545868,724.987610 199.450439,693.616699 218.194260,662.150146 
+                  C220.076553,658.990173 222.492157,658.555786 225.669159,658.564636 
+                  C247.322250,658.625122 268.975952,658.523682 290.628571,658.635986 
+                  C294.666687,658.656921 298.842133,657.000549 302.836060,659.075806 
+                  C303.062531,661.861694 301.020966,663.456238 299.961182,665.856934 
+                z"/>
+              </svg>
+            </a>
+        </div>
+      </div>
+      <!-- New Acknowledgments Section -->
+      <div class="row mt-3">
+        <div class="col-12">
+          <div class="border-top pt-2 text-center">
+            <small class="text-white">
+              <strong>Acknowledgments:</strong> This platform uses the <a href="https://europepmc.org/RestfulWebService" target="_blank" rel="noopener">Europe PMC RESTful Web Service</a> for article retrieval,
+              <a href="https://badge.dimensions.ai/" target="_blank" rel="noopener">Dimensions Badge</a>,
+              <a href="https://www.altmetric.com/products/altmetric-badges/" target="_blank" rel="noopener">Altmetric</a>,
+              <a href="https://plumanalytics.com/learn/about-metrics/" target="_blank" rel="noopener">PlumX</a>, and
+              <a href="https://scite.ai/" target="_blank" rel="noopener">Scite</a> badges for article metrics.
+              Articles published by <a href="https://www.springernature.com/" target="_blank" rel="noopener">Springer Nature</a>.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    // --- Utility Functions ---
+    function getSelectedFields() {
+      const checkboxes = document.querySelectorAll('#field-selection-form input[name="fields"]');
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.type === 'hidden' || cb.checked) {
+          selected.push(cb.value);
+        }
+      });
+      return selected;
+    }
+    
+    // Load more articles function
+    function loadMoreArticles() {
+      const selectedFields = getSelectedFields();
+      fetchArticles(selectedFields, currentPage + 1);
+    }
+    
+    function copyToClipboard(text) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text)
+          .then(() => {
+        showToast('Copied to clipboard!');
+          })
+          .catch(() => {
+        showToast('Failed to copy to clipboard. Please try again.');
+      });
+      }
+    }
+    
+    // Generate sharing URLs for various social media platforms
+    function generateSocialShareUrl(platform, text, url, title) {
+      const encodedText = encodeURIComponent(text);
+      const encodedUrl = encodeURIComponent(url);
+      const encodedTitle = encodeURIComponent(title);
+      
+      switch(platform.toLowerCase()) {
+        case 'twitter':
+        case 'x':
+          return `https://x.com/intent/tweet?text=${encodedText}&url=${encodedUrl}&hashtags=IJCVI,CVImaging`;
+        
+        case 'facebook':
+          return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`;
+        
+        case 'linkedin':
+          return `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        
+        case 'reddit':
+          return `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`;
+          
+        case 'researchgate':
+          return `https://www.researchgate.net/publiclinkingshare.Share.html?url=${encodedUrl}&title=${encodedTitle}`;
+        
+        case 'mendeley':
+          return `https://www.mendeley.com/import/?url=${encodedUrl}`;
+          
+        case 'email':
+          return `mailto:?subject=${encodedTitle}&body=${encodedText}%20${encodedUrl}`;
+          
+        default:
+          return '#';
+      }
+    }
+    
+    // Function to safely process HTML content
+    function createSafeHTML(html) {
+      if (!html) return '';
+      
+      // Double-encode to handle potential nested HTML entities
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      return doc.body.innerHTML;
+    }
+    
+    // Initialize welcome message
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('articles-container');
+      container.innerHTML = `
+        <div class="alert alert-info py-3 text-center">
+          <p><i class="fas fa-info-circle me-2"></i>Use the display options in the bar above to select which sections to show</p>
+          <small class="d-block mt-2">After clicking "Apply", your articles will load and a filter bar will appear to help you narrow down the results.</small>
+        </div>
+      `;
+      
+      // Show the display-options-bar on page load
+      const displayBar = document.getElementById('display-options-bar');
+      if (displayBar) {
+        displayBar.classList.remove('d-none');
+      }
+      
+      // Initialize the filter bar position if it exists and is visible
+      const filterBar = document.getElementById('sticky-filter-bar');
+      if (filterBar && !filterBar.classList.contains('d-none')) {
+        adjustFilterBarPosition();
+      }
+    });
+    
+    // --- Filtering Functions ---
+    function filterArticles() {
+      // Show the sticky filter bar if not already visible
+      showFilterBar();
+      
+      // Apply filters based on the filter bar inputs
+      applyFilters();
+    }
+    
+    function applyFilters() {
+      const keywordInput = document.getElementById('filter-keyword').value.toLowerCase();
+      const startDate = document.getElementById('filter-start-date').value;
+      const endDate = document.getElementById('filter-end-date').value;
+      
+      showToast('Filtering articles...');
+      
+      const articles = document.querySelectorAll('.article-card');
+      let visibleCount = 0;
+      
+      // Helper function to get text without HTML tags
+      const getTextContent = (element) => {
+        return element ? element.textContent.toLowerCase() : "";
+      };
+      
+      articles.forEach(article => {
+        const abstract = getTextContent(article.querySelector('.abstract-container'));
+        const details = getTextContent(article.querySelector('.article-body'));
+        const title = getTextContent(article.querySelector('.article-header h2'));
+        const pubDateMatch = article.querySelector('.article-meta') ? article.querySelector('.article-meta').textContent.match(/Published.*?(\d{4}-\d{2}-\d{2})/i) : null;
+        const pubDate = pubDateMatch ? pubDateMatch[1] : '';
+        
+        let matchesKeyword = !keywordInput || abstract.includes(keywordInput) || details.includes(keywordInput) || title.includes(keywordInput);
+        let matchesDate = true;
+        
+        if (startDate && endDate) {
+          matchesDate = pubDate >= startDate && pubDate <= endDate;
+        }
+        
+        const display = (matchesKeyword && matchesDate) ? '' : 'none';
+        article.style.display = display;
+        
+        if (display === '') {
+          visibleCount++;
+        }
+      });
+      
+      showToast(`Found ${visibleCount} matching articles`);
+    }
+    
+    function resetFilters() {
+      document.getElementById('filter-keyword').value = '';
+      document.getElementById('filter-start-date').value = '';
+      document.getElementById('filter-end-date').value = '';
+      
+      document.querySelectorAll('.article-card').forEach(article => {
+        article.style.display = '';
+      });
+      
+      showToast('Filters reset');
+    }
+    
+    function showFilterBar() {
+      const filterBar = document.getElementById('sticky-filter-bar');
+      filterBar.classList.remove('d-none');
+      filterBar.classList.add('show');
+      
+      // Ensure proper positioning when social handles bar is visible
+      adjustFilterBarPosition();
+      
+      // Add scroll event listener to adjust filter bar position when scrolling
+      if (!window.filterBarScrollListenerAdded) {
+        window.addEventListener('scroll', adjustFilterBarPosition);
+        window.filterBarScrollListenerAdded = true;
+      }
+    }
+    
+    // Export articles to CSV file
+    function exportArticlesToCSV() {
+      // Get all visible articles
+      const articles = document.querySelectorAll('.article-card');
+      const visibleArticles = Array.from(articles).filter(article => article.style.display !== 'none');
+      
+      if (visibleArticles.length === 0) {
+        showToast('No articles to export', 'warning');
+        return;
+      }
+      
+      // CSV header
+      let csvContent = 'Article Title,PMID,PMCID,Open Access,Publication Date,First author,DOI URL,Suggested Social Media\n';
+      
+      // Add data for each article
+      visibleArticles.forEach(article => {
+        // Extract title
+        const title = article.querySelector('.article-title')?.textContent.replace(/"/g, '""').trim() || 'N/A';
+        
+        // Extract PMID
+        const pmid = article.getAttribute('data-pmid') || 'N/A';
+        
+        // Extract PMCID - look for element with PMCID label or text
+        let pmcid = 'N/A';
+        const pmcidLabel = Array.from(article.querySelectorAll('.metadata-label')).find(el => el.textContent.includes('PMCID'));
+        if (pmcidLabel && pmcidLabel.nextElementSibling) {
+          pmcid = pmcidLabel.nextElementSibling.textContent.trim();
+        } else {
+          // Try alternative method with regex
+          const pmcidMatch = article.querySelector('.article-meta')?.textContent.match(/PMCID:\s*([^\s,]+)/);
+          if (pmcidMatch) {
+            pmcid = pmcidMatch[1];
+          }
+        }
+        
+        // Extract open access status
+        const isOpenAccess = article.querySelector('.badge.bg-success')?.textContent.includes('Open Access') ? 'Yes' : 'No';
+        
+        // Extract publication date
+        let pubDate = 'N/A';
+        // Try first with metadata-label
+        const pubDateLabel = Array.from(article.querySelectorAll('.metadata-label')).find(el => el.textContent.includes('Published'));
+        if (pubDateLabel && pubDateLabel.nextElementSibling) {
+          pubDate = pubDateLabel.nextElementSibling.textContent.trim();
+        } else {
+          // Try alternative method with regex
+          const pubDateMatch = article.querySelector('.article-meta')?.textContent.match(/Published[:\s]+([\d-]+)/i);
+          if (pubDateMatch) {
+            pubDate = pubDateMatch[1];
+          }
+        }
+        
+        // Extract authors
+        let authors = 'N/A';
+        // First try to find the authors element with ID format "authors-[pmid]"
+        if (pmid && pmid !== 'N/A') {
+          const authorsElement = article.querySelector(`#authors-${pmid}`);
+          if (authorsElement) {
+            authors = authorsElement.textContent.trim().replace(/,\s*/g, ' - ').replace(/"/g, '""');
+          }
+        }
+        
+        // If not found, try with metadata-label
+        if (authors === 'N/A') {
+          const authorsLabel = Array.from(article.querySelectorAll('.metadata-label')).find(el => el.textContent.includes('Authors'));
+          if (authorsLabel && authorsLabel.nextElementSibling) {
+            authors = authorsLabel.nextElementSibling.textContent.trim().replace(/,\s*/g, ' - ').replace(/"/g, '""');
+          } else {
+            // Try alternative method with regex
+            const authorsSection = article.querySelector('.article-meta');
+            if (authorsSection) {
+              const authorsMatch = authorsSection.textContent.match(/Authors?[:\s]+([^\.]+)/i);
+              if (authorsMatch && authorsMatch[1]) {
+                authors = authorsMatch[1].trim().replace(/,\s*/g, ' - ').replace(/"/g, '""');
+              }
+            }
+          }
+        }
+        
+        // Extract DOI
+        const doi = article.getAttribute('data-doi') || '';
+        const doiUrl = doi ? `https://doi.org/${doi}` : 'N/A';
+        
+        // Find social media post text
+        let socialPost = '';
+        const socialTextEl = article.querySelector('.social-post p');
+        if (socialTextEl) {
+          socialPost = socialTextEl.textContent.replace(/"/g, '""').trim();
+        }
+        
+        // For debugging
+        console.log(`Exporting article: 
+          Title: ${title}
+          PMID: ${pmid}
+          PMCID: ${pmcid}
+          Open Access: ${isOpenAccess}
+          Pub Date: ${pubDate}
+          Authors: ${authors}
+          DOI: ${doiUrl}
+          Social: ${socialPost.substring(0, 20)}...
+        `);
+        
+        // Escape any commas and quotes in the fields
+        const row = [
+          `"${title}"`,
+          `"${pmid}"`,
+          `"${pmcid}"`,
+          `"${isOpenAccess}"`,
+          `"${pubDate}"`,
+          `"${authors}"`,
+          `"${doiUrl}"`,
+          `"${socialPost}"`
+        ].join(',');
+        
+        csvContent += row + '\n';
+      });
+      
+      // Create a Blob containing the CSV data
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+      // Create a temporary link to download the file
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'articles_export.csv');
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show success message
+      showToast('CSV file successfully downloaded', 'success');
+    }
+    
+    function adjustFilterBarPosition() {
+      const filterBar = document.getElementById('sticky-filter-bar');
+      const displayBar = document.getElementById('display-options-bar');
+      
+      // Get the header height from CSS variable
+      const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60;
+      
+      // Calculate the top position based on visible elements
+      let topPosition = headerHeight;
+      
+      // Add display bar height if it exists and is visible
+      if (displayBar && window.getComputedStyle(displayBar).display !== 'none') {
+        topPosition += displayBar.offsetHeight;
+      }
+      
+      // Set the filter bar's top position
+      filterBar.style.top = topPosition + 'px';
+    }
+    
+    // --- Social Media Post Generator ---
+    function generateSocialMediaPost(title, firstAuthorLastName) {
+      // Strip HTML tags for social media
+      const stripTags = (html) => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || '';
+      };
+      
+      // Clean the title of any HTML tags
+      const cleanTitle = stripTags(title);
+      
+      const templates = [
+        `'${cleanTitle}' by ${firstAuthorLastName} et al. brings a fresh perspective to #CVImaging. Read it now in #IJCVI!`,
+        `Explore '${cleanTitle}' by ${firstAuthorLastName} et al., redefining innovation in cardiovascular research. Discover more in #IJCVI.`,
+        `'${cleanTitle}'—an essential read from ${firstAuthorLastName} et al., showcasing cutting-edge science in #IJCVI!`,
+        `Innovative research alert: '${cleanTitle}' by ${firstAuthorLastName} et al. is now available in #IJCVI.`,
+        `Leading the way in #CVImaging: '${cleanTitle}' by ${firstAuthorLastName} et al., featured in #IJCVI.`,
+        `Explore '${cleanTitle}', the latest in groundbreaking research by ${firstAuthorLastName} et al. Read it in #IJCVI!`,
+        `Don't miss the study '${cleanTitle}' by ${firstAuthorLastName} et al., a key contribution to cardiovascular science. Now in #IJCVI!`,
+        `${firstAuthorLastName} et al. present impactful findings in '${cleanTitle}'. Read this important study in #IJCVI.`,
+        `New in #IJCVI: '${cleanTitle}' by ${firstAuthorLastName} et al., offering novel insights into imaging science.`,
+        `Highlighting '${cleanTitle}'—${firstAuthorLastName} et al. reveal transformative discoveries in #IJCVI.`,
+        `Discover how '${cleanTitle}' by ${firstAuthorLastName} et al. is shaping the future of imaging research. Read in #IJCVI!`,
+        `Exciting research from ${firstAuthorLastName} et al.: '${cleanTitle}' explores new dimensions in #CVImaging. Featured in #IJCVI.`,
+        `Explore the paradigm-shifting study '${cleanTitle}' by ${firstAuthorLastName} et al., now in #IJCVI!`,
+        `Revolutionizing #CVImaging: ${firstAuthorLastName} et al. unveil '${cleanTitle}' in #IJCVI.`,
+        `Stay at the forefront of cardiovascular science: Read '${cleanTitle}' by ${firstAuthorLastName} et al., now in #IJCVI!`,
+        `Discover cutting-edge insights in '${cleanTitle}'. ${firstAuthorLastName} et al. present their latest findings in #IJCVI!`,
+        `The latest research by ${firstAuthorLastName} et al. explores '${cleanTitle}'. Dive deeper in #IJCVI!`,
+        `Explore the groundbreaking study '${cleanTitle}' by ${firstAuthorLastName} et al., now featured in #IJCVI.`,
+        `Exciting developments in #CVImaging: '${cleanTitle}' by ${firstAuthorLastName} et al. Read more in #IJCVI!`,
+        `'${cleanTitle}'—a must-read study by ${firstAuthorLastName} et al., pushing the boundaries of knowledge in #IJCVI!`,
+        `Delve into the latest advancements in '${cleanTitle}'. ${firstAuthorLastName} et al. share groundbreaking findings in #IJCVI!`,
+        `New insights unveiled by ${firstAuthorLastName} et al. in '${cleanTitle}'. Discover the details in #IJCVI!`,
+        `Check out the innovative study '${cleanTitle}' by ${firstAuthorLastName} et al., now spotlighted in #IJCVI.`,
+        `Significant strides in #CVImaging: '${cleanTitle}' authored by ${firstAuthorLastName} et al. Explore more in #IJCVI!`,
+        `'${cleanTitle}'—a pivotal contribution by ${firstAuthorLastName} et al., expanding horizons in #IJCVI!`,
+        `Uncover pioneering research in '${cleanTitle}' by ${firstAuthorLastName} et al. Read more in #IJCVI!`,
+        `Discover how ${firstAuthorLastName} et al. are advancing the field with '${cleanTitle}', now featured in #IJCVI!`,
+        `The study '${cleanTitle}' by ${firstAuthorLastName} et al. offers fresh perspectives in #CVImaging. Explore it in #IJCVI!`,
+        `Breaking new ground in imaging science: '${cleanTitle}' by ${firstAuthorLastName} et al., highlighted in #IJCVI!`,
+        `Transformative research '${cleanTitle}' by ${firstAuthorLastName} et al. is shaping the future of #CVImaging. Learn more in #IJCVI!`,
+        `New research in #IJCVI: '${cleanTitle}' by ${firstAuthorLastName} et al.`,
+        `Latest insights: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Read '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI now!`,
+        `Exciting study! '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Breakthrough research: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI!`,
+        `Big news! '${cleanTitle}' by ${firstAuthorLastName} et al. just published in #IJCVI.`,
+        `Game-changing study: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Must-read: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Fresh insights! '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Check out '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI!`,
+        `Curious about imaging? Read '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `New perspectives: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `'${cleanTitle}' by ${firstAuthorLastName} et al. offers key insights—#IJCVI.`,
+        `Breaking new ground: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Fresh off the press: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Latest contribution to #CVImaging: '${cleanTitle}' by ${firstAuthorLastName} et al. in #IJCVI.`,
+        `Examining the findings in '${cleanTitle}' by ${firstAuthorLastName} et al., now published in #IJCVI.`,
+        `Exciting developments in #CVImaging! '${cleanTitle}' by ${firstAuthorLastName} et al. is now in #IJCVI.`,
+        `Major progress in the field! '${cleanTitle}' by ${firstAuthorLastName} et al. is making an impact in #IJCVI.`,
+        `A must-read for imaging enthusiasts! '${cleanTitle}' by ${firstAuthorLastName} et al. is now available in #IJCVI.`,
+        `Big news in #CVImaging! '${cleanTitle}' by ${firstAuthorLastName} et al. is in #IJCVI.`,
+        `Key findings from '${cleanTitle}' by ${firstAuthorLastName} et al. now published in #IJCVI.`,
+        `Exciting research ahead! '${cleanTitle}' by ${firstAuthorLastName} et al. is featured in #IJCVI.`,
+        `Breakthrough insights: '${cleanTitle}' by ${firstAuthorLastName} et al. is now in #IJCVI.`,
+        `Let's discuss! '${cleanTitle}' by ${firstAuthorLastName} et al. offers key insights in #IJCVI. Thoughts?`,
+        `What do you think about '${cleanTitle}' by ${firstAuthorLastName} et al.? Read it now in #IJCVI and share your views!`,
+        `Join the conversation on '${cleanTitle}' by ${firstAuthorLastName} et al., now in #IJCVI. Let's explore the findings together!`
+      ];
+      return templates[Math.floor(Math.random() * templates.length)];
+    }
+    
+    // --- Badge HTML Generators ---
+    function getDimensionsBadgeHTML(pmid) {
+      const dimensionsId = `dimensions-badge-${pmid}`;
+      return `<div class="row mb-2">
+                <div class="col-12">
+                  <button class="btn btn-outline-primary collapse-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#${dimensionsId}"
+                    aria-expanded="false"
+                    aria-controls="${dimensionsId}">
+                    <span><i class="fas fa-chart-line me-2"></i>Dimensions Metrics</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                  </button>
+                  <div class="collapse" id="${dimensionsId}">
+                    <div class="card card-body">
+                      <div class="dimensions-badge">
+                        <span class="__dimensions_badge_embed__" data-pmid="${pmid}" data-legend="always"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+    }
+    
+    function getAltmetricBadgeHTML(doi) {
+      const altmetricId = `altmetric-badge-${doi.replace(/\//g, '-')}`;
+      return `<div class="row mb-2">
+                <div class="col-12">
+                  <button class="btn btn-outline-primary collapse-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#${altmetricId}"
+                    aria-expanded="false"
+                    aria-controls="${altmetricId}">
+                    <span><i class="fas fa-share-alt me-2"></i>Altmetric Metrics</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                  </button>
+                  <div class="collapse" id="${altmetricId}">
+                    <div class="card card-body">
+                      <div class="altmetric-badge">
+                        <div class="altmetric-embed" 
+                            data-badge-type="donut" 
+                            data-badge-details="right" 
+                            data-doi="${doi}" 
+                            data-condensed="true">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+    }
+    
+    // PlumX Badge (original metrics)
+    function getPlumXBadgeHTML(doi) {
+      const plumxId = `plumx-badge-${doi.replace(/\//g, '-')}`;
+      return `<div class="row mb-2">
+                <div class="col-12">
+                  <button class="btn btn-outline-primary collapse-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#${plumxId}"
+                    aria-expanded="false"
+                    aria-controls="${plumxId}">
+                    <span><i class="fas fa-chart-pie me-2"></i>PlumX Metrics</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                  </button>
+                  <div class="collapse" id="${plumxId}">
+                    <div class="card card-body">
+                      <div class="plumx-badge">
+                        <a href="https://plu.mx/plum/a/?doi=${doi}" data-popup="top" data-badge="true"
+                          class="plumx-plum-print-popup" data-site="plum">
+                          <svg viewBox="0 0 100 100" width="75" height="75">
+                            <path fill="#6e1a62" stroke="#6e1a62" stroke-width="1" 
+                              d="M 36.075524746876404,57.96956599135724 C 47.24224000477168,47.68596460512846 53.05297314616313,51.90770935123954 46.72339182284403,65.70569425459581 L 53.27660817715597,65.70569425459581 C 46.94702685383687,51.90770935123954 54.11916130196383,46.54361327076243 66.73225377367403,64.96794365950129 L 72.33461419729612,47.7256512143974 C 51.300858350195114,55.217457868193435 48.651416263702714,46.662138123559565 61.88240715909315,39.21976840364822 L 56.58074376063895,35.36788447550181 C 53.59123058093537,50.25112330547885 45.221755705838305,50.334127390178 44.7288145302294,30.470688282908622 L 33.05540672336235,38.951915501347315 C 51.79433272187257,45.55887066943854 49.12908117584119,53.493064614593585 34.05046952557818,51.73708687489691 Z">
+                            </path>
+                            <circle fill="#6e1a62" stroke="#6e1a62" stroke-width="1" r="4" 
+                              cx="32.880982706687234" cy="55.56230589874905"></circle>
+                            <circle fill="#6e1a62" stroke="#6e1a62" stroke-width="1" r="4" 
+                              cx="50" cy="68"></circle>
+                            <circle fill="#c43bf3" stroke="#6e1a62" stroke-width="1" r="11.066089190457772" 
+                              cx="75.57002555852411" cy="58.30820493714331"></circle>
+                            <circle fill="none" stroke="#ffffff" stroke-width="1.5" r="9.566089190457772" 
+                              cx="75.57002555852411" cy="58.30820493714331"></circle>
+                            <circle fill="#6e1a62" stroke="#6e1a62" stroke-width="1" r="4" 
+                              cx="60.58013454126452" cy="35.43769410125095"></circle>
+                            <circle fill="#fd5704" stroke="#6e1a62" stroke-width="1" r="8.807354922057604" 
+                              cx="35.92280101098581" cy="30.62439782064578"></circle>
+                            <circle fill="none" stroke="#ffffff" stroke-width="1.5" r="7.307354922057604" 
+                              cx="35.92280101098581" cy="30.62439782064578"></circle>
+                          </svg>
+                          <strong>PLUM X</strong> Metrics
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+    }
+    
+    // PlumX Artifact Summary Widget
+    function getPlumXDetailsBadgeHTML(doi) {
+      const plumxDetailsId = `plumx-details-badge-${doi.replace(/\//g, '-')}`;
+      return `<div class="row mb-2">
+                <div class="col-12">
+                  <button class="btn btn-outline-primary collapse-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#${plumxDetailsId}"
+                    aria-expanded="false"
+                    aria-controls="${plumxDetailsId}">
+                    <span><i class="fas fa-chart-bar me-2"></i>PlumX Metrics Summary</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                  </button>
+                  <div class="collapse" id="${plumxDetailsId}">
+                    <div class="card card-body">
+                      <div class="plumx-details-badge">
+                        <a href="https://plu.mx/plum/a/?doi=${doi}" 
+                           class="plumx-summary" 
+                           data-orientation="horizontal" 
+                           data-hide-when-empty="false"
+                           data-hide-print="false"
+                           data-hide-usage="false"
+                           data-hide-captures="false"
+                           data-hide-mentions="false"
+                           data-hide-socialmedia="false"
+                           data-hide-citations="false"
+                           data-pass-hidden-categories="false"></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+    }
+    
+    // Scite Badge
+    function getSciteBadgeHTML(doi) {
+      const sciteId = `scite-badge-${doi.replace(/\//g, '-')}`;
+      return `<div class="row mb-2">
+                <div class="col-12">
+                  <button class="btn btn-outline-primary collapse-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#${sciteId}"
+                    aria-expanded="false"
+                    aria-controls="${sciteId}">
+                    <span><i class="fas fa-quote-right me-2"></i>Scite Metrics</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                  </button>
+                  <div class="collapse" id="${sciteId}">
+                    <div class="card card-body">
+                      <div class="scite-badge"
+                        data-doi="${doi}"
+                        data-tooltip-placement="top"
+                        data-show-zero="true"
+                        data-small="false"
+                        data-show-labels="true"
+                        data-tally-show="true"
+                        data-section-tally-show="true"
+                        data-layout="vertical"
+                        data-section-tally-layout="horizontal">
+                      </div>
+                      <p class="text-muted small mt-2 mb-0">If badge doesn't appear, <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener">view on scite.ai</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+    }
+    
+    // Define the mandatory fields that should always be checked
+    const mandatoryFields = ['title', 'pdf', 'meta', 'keywords', 'authors', 'social'];
+    
+    // --- Fetch and extract functions ---
+    async function fetchFullTextXML(pmcid) {
+      if (!pmcid || pmcid === 'N/A') return null;
+      
+      try {
+        // Using a direct CORS-enabled endpoint
+        const url = `https://www.ebi.ac.uk/europepmc/webservices/rest/${pmcid}/fullTextXML`;
+
+        const response = await fetch(url);
+        // Handle 404 responses specifically
+        if (response.status === 404) {
+          console.log(`Full text XML not available for PMCID ${pmcid} (404 response)`);
+          return null;
+        }
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch full text: ${response.status} ${response.statusText}`);
+        }
+        
+        const xmlText = await response.text();
+        const parser = new DOMParser();
+        return parser.parseFromString(xmlText, "text/xml");
+      } catch (error) {
+        console.warn(`Error fetching full text for PMCID ${pmcid}: ${error.message}`);
+        return null;
+      }
+    }
+    
+    // Extract the conclusions section from the full text XML.
+    function extractConclusions(xmlDoc) {
+      let conclusions = "";
+      const secs = xmlDoc.getElementsByTagName("sec");
+      for (let i = 0; i < secs.length; i++) {
+        const titleEl = secs[i].getElementsByTagName("title")[0];
+        if (titleEl && titleEl.textContent.toLowerCase().includes("conclusion")) {
+          conclusions = secs[i].innerHTML;
+          break;
+        }
+      }
+      return conclusions;
+    }
+    
+    // Fetch citation data from EuropePMC API
+    async function fetchCitations(pmid) {
+      if (!pmid || pmid === 'N/A') {
+        return { citationList: { citation: [], totalCitations: 0 } };
+      }
+      
+      try {
+        const url = `https://www.ebi.ac.uk/europepmc/webservices/rest/${pmid}/citations?format=json`;
+        const response = await fetch(url);
+        
+        // Handle 404 responses specifically - this is common for new articles without citations yet
+        if (response.status === 404) {
+          console.log(`No citation data available for PMID ${pmid} (404 response)`);
+          return { citationList: { citation: [], totalCitations: 0 } };
+        }
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch citations: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Validate the response structure to ensure it contains citation data
+        if (!data || !data.citationList) {
+          console.warn(`No citation list found in response for PMID ${pmid}`);
+          return { citationList: { citation: [], totalCitations: 0 } };
+        }
+        
+        // Ensure citation is always an array, even if it's missing or not an array in the response
+        if (!data.citationList.citation) {
+          data.citationList.citation = [];
+        } else if (!Array.isArray(data.citationList.citation)) {
+          // If citation is not an array (e.g., single object), convert to array
+          data.citationList.citation = [data.citationList.citation];
+        }
+        
+        return data;
+      } catch (error) {
+        console.error(`Error fetching citations for PMID ${pmid}:`, error);
+        // Return a valid empty data structure instead of null to avoid further errors
+        return { citationList: { citation: [], totalCitations: 0 } };
+      }
+    }
+    
+    // --- Script Loader Functions ---
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = src;
+        script.charset = "utf-8";
+        script.onload = () => resolve();
+        script.onerror = (e) => reject(e);
+        document.head.appendChild(script);
+      });
+    }
+    
+    async function loadBadgeScripts(selectedFields) {
+      try {
+        const promises = [];
+        
+        if (selectedFields.includes("dimensions")) {
+          promises.push(loadScript("https://badge.dimensions.ai/badge.js"));
+        }
+        if (selectedFields.includes("altmetric")) {
+          // Load Altmetric script with a new global variable for testing if loaded
+          window._altmetric_embed_init_called = false;
+          promises.push(loadScript("https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"));
+        }
+        if (selectedFields.includes("plumxDetails")) {
+          // Only load the PlumX Summary Widget script
+          promises.push(loadScript("https://cdn.plu.mx/widget-summary.js"));
+        }
+        if (selectedFields.includes("sciteBadge")) {
+          console.log("Loading Scite badge script...");
+          // Add global flag to track Scite rate limit status
+          window._sciteRateLimited = false;
+          window._sciteRetryCount = 0;
+          window._sciteMaxRetries = 3;
+          
+          promises.push(
+            loadSciteScript()
+          );
+        }
+        
+        await Promise.all(promises);
+        console.log("All badge scripts loaded successfully");
+      } catch (err) {
+        console.error("Error loading badge scripts:", err);
+      }
+    }
+    
+    // Function to load the Scite script with rate limit handling
+    function loadSciteScript(retryDelay = 2000) {
+      return new Promise((resolve, reject) => {
+        // Don't retry if we've hit max retries
+        if (window._sciteRetryCount >= window._sciteMaxRetries) {
+          console.warn(`Reached maximum Scite API retries (${window._sciteMaxRetries}). Will not attempt further requests.`);
+          const badges = document.querySelectorAll('.scite-badge');
+          badges.forEach(badge => {
+            const doi = badge.getAttribute('data-doi');
+            badge.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> Rate limited by Scite API.</p>
+            <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View on Scite.ai instead</a>`;
+          });
+          return resolve();
+        }
+        
+        loadScript("https://cdn.scite.ai/badge/scite-badge-latest.min.js")
+          .then(() => {
+            console.log("Scite badge script loaded successfully");
+            resolve();
+          })
+          .catch(err => {
+            console.error("Failed to load Scite badge script:", err);
+            
+            // Check for rate limiting error (429)
+            if (err && err.status === 429) {
+              window._sciteRateLimited = true;
+              window._sciteRetryCount++;
+              
+              // Calculate exponential backoff delay
+              const backoffDelay = retryDelay * (window._sciteRetryCount);
+              console.warn(`Scite API rate limited. Retry ${window._sciteRetryCount}/${window._sciteMaxRetries} in ${backoffDelay}ms`);
+              
+              // Show notification to the user
+              showToast(`Scite API rate limited. Retrying in ${backoffDelay/1000} seconds...`, "warning");
+              
+              // Set temporary message in badge containers
+              const badges = document.querySelectorAll('.scite-badge');
+              badges.forEach(badge => {
+                badge.innerHTML = `<p class="text-warning"><i class="fas fa-clock"></i> Rate limited by Scite API. Retrying soon...</p>`;
+              });
+              
+              // Try again after delay with exponential backoff
+              setTimeout(() => {
+                loadSciteScript(backoffDelay)
+                  .then(resolve)
+                  .catch(reject);
+              }, backoffDelay);
+            } else {
+              // Try alternate URL if it's not a rate limit issue
+              loadScript("https://badge.scite.ai/badge-latest.min.js")
+                .then(() => {
+                  console.log("Scite badge script loaded from alternate URL");
+                  resolve();
+                })
+                .catch(e => {
+                  console.error("Failed to load Scite badge script from alternate URL:", e);
+                  reject(e);
+                });
+            }
+          });
+      });
+    }
+    
+    // --- Main Article Generation ---
+    function generateHTML() {
+      console.log("generateHTML function called");
+      const selectedFields = getSelectedFields();
+      console.log("Selected fields:", selectedFields);
+      
+      // Ensure mandatory fields are included
+      mandatoryFields.forEach(field => {
+        if (!selectedFields.includes(field)) {
+          const checkbox = document.querySelector(`#field-${field}`);
+          if (checkbox) {
+            checkbox.checked = true;
+          }
+          selectedFields.push(field);
+        }
+      });
+      
+      // Save current settings to localStorage
+      saveCurrentSettings();
+      
+      document.getElementById('articles-container').innerHTML = "";
+      
+      // Show loading indicator
+      const loadingIndicator = document.getElementById('loading-indicator');
+      loadingIndicator.classList.remove('d-none');
+      
+      fetchArticles(selectedFields);
+    }
+    
+    let currentPage = 1;
+    // PageSize is now dynamically set via user input in the display options bar, default is 10
+    
+    async function fetchArticles(selectedFields, page = 1) {
+      const userPageSize = document.getElementById('articles-count').value || 10;
+      const apiUrl = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=JOURNAL%3A"Int%20J%20Cardiovasc%20Imaging"&resultType=core&pageSize=${userPageSize}&sort=P_PDATE_D%20desc&format=json`;
+      
+      try {
+        console.log(`Fetching ${userPageSize} articles...`);
+        
+        // Pre-load badge scripts before rendering articles 
+        // to ensure they're available when badges are added to DOM
+        await loadBadgeScripts(selectedFields);
+        
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        const articles = data.resultList && data.resultList.result ? data.resultList.result : [];
+        const totalResults = data.hitCount || 0;
+        
+        console.log(`Number of articles fetched: ${articles.length}, Total available: ${totalResults}`);
+        
+        // Hide loading indicator
+        document.getElementById('loading-indicator').classList.add('d-none');
+        
+        const container = document.getElementById('articles-container');
+        
+        // Clear the container for new results
+        container.innerHTML = "";
+        currentPage = 1;
+        
+        if (articles.length === 0) {
+          container.innerHTML += `
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>No articles found. Try different search criteria.
+            </div>
+          `;
+          return;
+        }
+        
+        // Show filter bar when articles are loaded
+        if (page === 1) {
+          showFilterBar();
+        }
+    
+        for (let article of articles) {
+          // Extract fields
+          const title = article.title || 'No Title';
+          const abstract = article.abstractText ? article.abstractText.replace(/\n/g, ' ').trim() : 'No Abstract Available';
+          const keywords = article.keywordList && article.keywordList.keyword ? article.keywordList.keyword.join(', ') : '';
+          const doi = article.doi || null;
+          const doi_url = doi ? 'https://doi.org/' + doi : '#';
+          const links = article.fullTextUrlList && article.fullTextUrlList.fullTextUrl ? article.fullTextUrlList.fullTextUrl : [];
+          const issue = article.journalInfo && article.journalInfo.issue ? article.journalInfo.issue : 'N/A';
+          const volume = article.journalInfo && article.journalInfo.volume ? article.journalInfo.volume : 'N/A';
+          const pub_date = article.journalInfo && article.journalInfo.printPublicationDate ? article.journalInfo.printPublicationDate : 'Unknown Date';
+          const pmid = article.pmid || 'N/A';
+          const pmcid = article.pmcid || 'N/A';
+          const is_open_access = article.isOpenAccess === 'Y';
+    
+          // Process authors
+          const authors = article.authorList && article.authorList.author ? article.authorList.author : [];
+          const firstAuthorLastName = authors.length ? (authors[0].lastName || 'Unknown') : 'Unknown';
+          
+          let authorBadges = '';
+          authors.forEach(author => {
+            const firstName = author.firstName || '';
+            const lastName = author.lastName || '';
+            const fullName = (firstName + ' ' + lastName).trim();
+            const linkedinLink = 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(fullName);
+            const xLink = 'https://twitter.com/search?q=' + encodeURIComponent(fullName);
+            
+            authorBadges += `
+              <span class="author-badge">
+                <span>${fullName}</span>
+                <a href="${linkedinLink}" target="_blank" rel="noopener" class="social-link linkedin" aria-label="Find ${fullName} on LinkedIn">
+                  <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="${xLink}" target="_blank" rel="noopener" class="social-link twitter" aria-label="Find ${fullName} on X">
+                  <svg width="14" height="14" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="currentColor"/>
+                  </svg>
+                </a>
+              </span>
+            `;
+          });
+    
+          // Get PDF link if available
+          let pdf_url = '#';
+          if (links.length) {
+            const pdfLink = links.find(link => link.documentStyle === 'pdf');
+            if (pdfLink && pdfLink.url) {
+              pdf_url = pdfLink.url;
+            }
+          }
+          
+          // Generate social media post
+          const social_post = generateSocialMediaPost(title, firstAuthorLastName);
+          
+          // Start building the article card
+          let articleHTML = `
+            <div class="article-card" data-pmid="${pmid}" data-doi="${doi}">
+              <div class="article-header">
+          `;
+          
+          // Add title if selected
+          if (selectedFields.includes("title")) {
+            // Extract year from pub_date
+            const pubYear = pub_date && pub_date.length >= 4 ? pub_date.substring(0, 4) : '';
+            
+            articleHTML += `
+              <div class="d-flex justify-content-between align-items-start">
+                <h2 class="article-title"></h2>
+                <div class="ms-2 d-flex align-items-center">
+                  ${pubYear ? `<span class="badge bg-secondary me-1">${pubYear}</span>` : ''}
+                  ${is_open_access ? '<span class="badge bg-success">Open Access</span>' : ''}
+                </div>
+              </div>
+            `;
+          }
+          
+          articleHTML += `</div><div class="article-body">`;
+          
+          // Add meta information if selected
+          if (selectedFields.includes("meta")) {
+            articleHTML += `
+              <div class="article-meta mb-3">
+                <div class="metadata-row">
+                  <div class="metadata-item">
+                    <span class="metadata-label">Issue</span>
+                    <span>${issue}</span>
+                  </div>
+                  <div class="metadata-item">
+                    <span class="metadata-label">Volume</span>
+                    <span>${volume}</span>
+                  </div>
+                  <div class="metadata-item">
+                    <span class="metadata-label">Published</span>
+                    <span>${pub_date}</span>
+                  </div>
+                  <div class="metadata-item">
+                    <span class="metadata-label">PMID</span>
+                    <span>${pmid}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          // Add PDF download button and DOI if selected
+          if (selectedFields.includes("pdf")) {
+            articleHTML += `
+              <div class="mb-3">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                  <a href="${pdf_url}" target="_blank" rel="noopener" class="btn btn-primary" aria-label="Download PDF">
+                    <i class="fas fa-file-pdf me-2"></i>Download PDF
+                  </a>
+                  ${doi ? `
+                  <div class="d-flex align-items-center">
+                    <span class="me-1 text-nowrap">DOI:</span>
+                    <a href="${doi_url}" target="_blank" rel="noopener" class="me-1">${doi}</a>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('${doi_url}')" aria-label="Copy DOI" title="Copy DOI to clipboard">
+                      <i class="far fa-copy"></i>
+                    </button>
+                  </div>
+                  ` : '<span class="text-muted ms-2">DOI: N/A</span>'}
+                </div>
+              </div>
+            `;
+          }
+          
+          // Add keywords always visible if selected
+          if (selectedFields.includes("keywords") && keywords) {
+            articleHTML += `
+              <div class="mb-3">
+                <h6 class="mb-2">Keywords</h6>
+                <div>
+                  ${keywords.split(', ').map(keyword => 
+                    `<span class="badge bg-light text-dark me-1 mb-1 p-2">${keyword}</span>`
+                  ).join('')}
+                </div>
+              </div>
+            `;
+          }
+          
+          // Modified keywords section (if we keep it, but no more DOI)
+          if (selectedFields.includes("keywords") && false) { // We set this to false to remove the collapsible section
+            const keywordsId = `keywords-${pmid}`;
+            articleHTML += `
+              <div class="mb-3">
+                <div class="collapsible-section">
+                  <button class="btn btn-outline-primary collapse-toggle" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#${keywordsId}" 
+                        aria-expanded="false" 
+                        aria-controls="${keywordsId}"
+                        aria-label="Show keywords">
+                    <i class="fas fa-tags me-2"></i>
+                    Keywords
+                    <i class="fas fa-chevron-down icon"></i>
+                  </button>
+                </div>
+                <div class="collapse" id="${keywordsId}">
+                  <div class="mt-3">
+                    ${keywords ? `
+                    <div class="mb-3">
+                      <h6 class="mb-2">Keywords</h6>
+                      <div>
+                        ${keywords.split(', ').map(keyword => 
+                          `<span class="badge bg-light text-dark me-1 mb-1 p-2">${keyword}</span>`
+                        ).join('')}
+                      </div>
+                    </div>` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          // Add authors if selected
+          if (selectedFields.includes("authors")) {
+            const authorId = `authors-${pmid}`;
+            articleHTML += `
+              <div class="mb-3">
+                <div class="collapsible-section">
+                  <button class="btn btn-outline-primary collapse-toggle" 
+                         type="button" 
+                         data-bs-toggle="collapse" 
+                         data-bs-target="#${authorId}" 
+                         aria-expanded="false" 
+                         aria-controls="${authorId}"
+                         aria-label="Show authors">
+                    <i class="fas fa-users me-2"></i>
+                    Authors
+                    <i class="fas fa-chevron-down icon"></i>
+                  </button>
+                </div>
+                <div class="collapse" id="${authorId}">
+                  <div class="mt-3">
+                    <div class="d-flex flex-wrap">${authorBadges}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          // Add abstract if selected
+          if (selectedFields.includes("abstract")) {
+            const abstractId = `abstract-${pmid}`;
+            articleHTML += `
+              <div class="mb-3">
+                <div class="collapsible-section">
+                  <button class="btn btn-outline-primary collapse-toggle" 
+                         type="button" 
+                         data-bs-toggle="collapse" 
+                         data-bs-target="#${abstractId}" 
+                         aria-expanded="false" 
+                         aria-controls="${abstractId}"
+                         aria-label="Show abstract">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Abstract
+                    <i class="fas fa-chevron-down icon"></i>
+                  </button>
+                </div>
+                <div class="collapse" id="${abstractId}">
+                  <div class="abstract-container mt-3">
+                    <p class="mb-0 abstract-content" data-abstract-id="${abstractId}"></p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          // Add social media post if selected
+          if (selectedFields.includes("social")) {
+            const socialId = `social-${pmid}`;
+            articleHTML += `
+              <div class="mb-3">
+                <div class="collapsible-section">
+                  <button class="btn btn-outline-primary collapse-toggle" 
+                         type="button" 
+                         data-bs-toggle="collapse" 
+                         data-bs-target="#${socialId}" 
+                         aria-expanded="false" 
+                         aria-controls="${socialId}"
+                         aria-label="Show social media post template">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Social Media Post
+                    <i class="fas fa-chevron-down icon"></i>
+                  </button>
+                </div>
+                <div class="collapse" id="${socialId}">
+                  <div class="social-post mt-3">
+                    <p class="mb-2">${social_post}</p>
+                    <button class="btn btn-outline-primary" onclick="copyToClipboard(\`${social_post}\`)" aria-label="Copy social media post template">
+                      <i class="far fa-copy me-2"></i>Copy Text
+                    </button>
+                    <div class="social-share-buttons">
+                      <a href="${generateSocialShareUrl('twitter', social_post, doi_url, title)}" target="_blank" rel="noopener" class="social-share-btn btn-twitter" aria-label="Share on Twitter/X">
+                        <svg width="16" height="16" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+                          <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="white"/>
+                        </svg><span>X/Twitter</span>
+                      </a>
+                      <a href="${generateSocialShareUrl('facebook', social_post, doi_url, title)}" target="_blank" rel="noopener" class="social-share-btn btn-facebook" aria-label="Share on Facebook">
+                        <i class="fab fa-facebook-f"></i><span>Facebook</span>
+                      </a>
+                      <a href="${generateSocialShareUrl('linkedin', social_post, doi_url, title)}" target="_blank" rel="noopener" class="social-share-btn btn-linkedin" aria-label="Share on LinkedIn">
+                        <i class="fab fa-linkedin-in"></i><span>LinkedIn</span>
+                      </a>
+                      <a href="${generateSocialShareUrl('reddit', social_post, doi_url, title)}" target="_blank" rel="noopener" class="social-share-btn btn-reddit" aria-label="Share on Reddit">
+                        <i class="fab fa-reddit-alien"></i><span>Reddit</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          // Close article body and add footer
+          articleHTML += `</div><div class="article-footer">`;
+          
+          // Add metric badges
+          let badgesHTML = '';
+          
+          // Determine which badges to show based on selected fields and available identifiers
+          const showDimensions = selectedFields.includes("dimensions") && pmid !== 'N/A';
+          const showAltmetric = selectedFields.includes("altmetric") && doi;
+          const showPlumXDetails = selectedFields.includes("plumxDetails") && doi;
+          const showSciteBadge = selectedFields.includes("sciteBadge") && doi;
+          
+          // Only create badge container if at least one badge is selected
+          if (showDimensions || showAltmetric || showPlumXDetails || showSciteBadge) {
+            articleHTML += `<div class="mt-3 mb-3"><h5 class="mb-2 border-bottom pb-2">Article Metrics</h5></div>`;
+            articleHTML += `<div class="badges-container row">`;
+            
+            if (showDimensions) {
+              articleHTML += getDimensionsBadgeHTML(pmid);
+            }
+            if (showAltmetric) {
+              articleHTML += getAltmetricBadgeHTML(doi);
+            }
+            if (showPlumXDetails) {
+              articleHTML += getPlumXDetailsBadgeHTML(doi);
+            }
+            if (showSciteBadge) {
+              articleHTML += getSciteBadgeHTML(doi);
+            }
+            
+            articleHTML += `</div>`;
+          }
+          
+          // Close article footer and article card
+          articleHTML += `</div></div>`;
+          
+          // Add the article to the container
+          container.innerHTML += articleHTML;
+          
+          // Process and set HTML content for the title 
+          const articleCard = container.querySelector(`.article-card[data-pmid="${pmid}"]`);
+          if (articleCard && title) {
+            const titleElement = articleCard.querySelector('.article-title');
+            if (titleElement) {
+              titleElement.innerHTML = title; // Set title with HTML properly rendered
+            }
+            
+            // Set abstract content if applicable
+            if (abstract !== 'No Abstract Available') {
+              const abstractElement = articleCard.querySelector(`.abstract-content[data-abstract-id="abstract-${pmid}"]`);
+              if (abstractElement) {
+                abstractElement.innerHTML = abstract;
+              }
+            }
+          }
+          
+          // Initialize badges after adding them to the DOM
+          initializeBadges(selectedFields);
+          
+          // Specific handling for Altmetric badges which can be tricky to initialize
+          if (selectedFields.includes("altmetric") && doi) {
+            // Double-check if Altmetric badges are initialized
+            setTimeout(() => {
+              if (typeof _altmetric_embed_init === 'function') {
+                console.log(`Explicit Altmetric initialization for article with DOI: ${doi}`);
+                _altmetric_embed_init();
+              }
+            }, 1000);
+          }
+          
+          // No longer auto-expanding the first article - all articles start collapsed
+          
+          // If full-text XML is available and conclusions is selected, fetch and extract those
+          if (pmcid !== 'N/A' && selectedFields.includes("conclusions")) {
+            // Use an IIFE to avoid closure issues with async functions
+            (async function(articleElement, pmcid) {
+              try {
+                const xmlDoc = await fetchFullTextXML(pmcid);
+                if (xmlDoc) {
+                  const conclusionsContent = extractConclusions(xmlDoc);
+                  if (conclusionsContent) {
+                    const articleBody = articleElement.querySelector('.article-body');
+                    const conclusionsId = `conclusions-${pmid}`;
+                    
+                    let conclusionsHTML = `
+                      <div class="mb-3">
+                        <div class="collapsible-section">
+                          <button class="btn btn-outline-primary collapse-toggle" 
+                                 type="button" 
+                                 data-bs-toggle="collapse" 
+                                 data-bs-target="#${conclusionsId}" 
+                                 aria-expanded="false" 
+                                 aria-controls="${conclusionsId}">
+                            <span><i class="fas fa-lightbulb me-2"></i>Conclusions</span>
+                            <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                          </button>
+                          <div class="collapse" id="${conclusionsId}">
+                            <div class="card card-body mt-2">
+                              ${createSafeHTML(conclusionsContent)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                    articleBody.insertAdjacentHTML('beforeend', conclusionsHTML);
+                  } else {
+                    console.log(`No conclusions found for PMCID ${pmcid}`);
+                    // Add a disabled button for feedback to the user
+                    displayConclusionsUnavailable(articleElement, pmid, "No conclusions section found in this article");
+                  }
+                } else {
+                  console.log(`XML document not available for PMCID ${pmcid}`);
+                  // Add a disabled button for feedback to the user
+                  displayConclusionsUnavailable(articleElement, pmid, "Full text not available for this article");
+                }
+              } catch (error) {
+                console.warn(`Error processing conclusions for PMCID ${pmcid}:`, error);
+                // Add a disabled button for feedback to the user
+                displayConclusionsUnavailable(articleElement, pmid, "Could not load conclusions for this article");
+              }
+            })(container.querySelector(`.article-card[data-pmid="${pmid}"]`), pmcid);
+          }
+          
+          // Helper function to display unavailable conclusions message
+          function displayConclusionsUnavailable(articleElement, pmid, message) {
+            const articleBody = articleElement.querySelector('.article-body');
+            const conclusionsId = `conclusions-${pmid}`;
+            
+            let conclusionsHTML = `
+              <div class="mb-3">
+                <div class="collapsible-section">
+                  <button class="btn btn-outline-secondary collapse-toggle" disabled>
+                    <span><i class="fas fa-lightbulb me-2"></i>Conclusions</span>
+                    <small class="ms-2 text-muted">${message}</small>
+                  </button>
+                </div>
+              </div>
+            `;
+            articleBody.insertAdjacentHTML('beforeend', conclusionsHTML);
+          }
+          
+          // If citations section is selected, fetch and display citation data
+          if (selectedFields.includes("citations") && pmid !== 'N/A') {
+            // Use an IIFE to avoid closure issues with async functions
+            (async function(articleElement, pmid) {
+              try {
+                // Add a placeholder for the citations section with loading indicator
+                const articleBody = articleElement.querySelector('.article-body');
+                const citationsId = `citations-${pmid}`;
+                
+                const loadingHTML = `
+                  <div class="mb-3" id="citations-loading-${pmid}">
+                    <div class="collapsible-section">
+                      <button class="btn btn-outline-primary collapse-toggle" disabled aria-label="Citations loading">
+                        <i class="fas fa-quote-right me-2"></i>
+                        Citations
+                        <div class="spinner-border spinner-border-sm ms-2" role="status">
+                          <span class="visually-hidden">Loading citations...</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                `;
+                
+                articleBody.insertAdjacentHTML('beforeend', loadingHTML);
+                
+                // Fetch the citation data
+                const citationData = await fetchCitations(pmid);
+                
+                // Remove the loading placeholder
+                const loadingElement = document.getElementById(`citations-loading-${pmid}`);
+                if (loadingElement) {
+                  loadingElement.remove();
+                }
+                
+                // Process citation data if available
+                if (citationData && citationData.citationList) {
+                  const citations = citationData.citationList.citation || [];
+                  const totalCitations = citationData.citationList?.totalCitations || 0;
+                  
+                  // Create HTML for citation list
+                  let citationsHTML = `
+                    <div class="mb-3">
+                      <div class="collapsible-section">
+                        <button class="btn btn-outline-primary collapse-toggle" 
+                               type="button" 
+                               data-bs-toggle="collapse" 
+                               data-bs-target="#${citationsId}" 
+                               aria-expanded="false" 
+                               aria-controls="${citationsId}">
+                          <span><i class="fas fa-quote-right me-2"></i>Citations (${totalCitations})</span>
+                          <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                      </div>
+                      <div class="collapse" id="${citationsId}">
+                        <div class="card card-body mt-2">
+                  `;
+                  
+                  if (citations.length === 0) {
+                    citationsHTML += `<p class="text-muted text-center mb-0">This article has not been cited yet. Recent articles may take time to appear in citation databases.</p>`;
+                  } else {
+                    citationsHTML += `<h6 class="mb-3">This article has been cited by ${totalCitations} publication(s):</h6>`;
+                    citationsHTML += `<ul class="citation-list">`;
+                    
+                    // Display up to 10 citations
+                    const displayCitations = citations.slice(0, 10);
+                    
+                    displayCitations.forEach((citation, index) => {
+                      const citationTitle = citation.title || 'No title available';
+                      const citationAuthors = citation.authorString || 'Unknown authors';
+                      const citationJournal = citation.journalTitle || '';
+                      const citationYear = citation.pubYear || '';
+                      const citationDoi = citation.doi ? `https://doi.org/${citation.doi}` : null;
+                      
+                      citationsHTML += `
+                        <li>
+                          <div>
+                            <div class="citation-title" data-citation-id="${citation.id || index}"></div>
+                            <div class="citation-authors" data-citation-id="${citation.id || index}"></div>
+                            <div class="text-muted">
+                              <span class="citation-journal" data-citation-id="${citation.id || index}"></span>
+                              ${citationJournal && citationYear ? ' ' : ''}
+                              <span class="citation-year">${citationYear}</span>
+                            </div>
+                            ${citationDoi ? `<a href="${citationDoi}" target="_blank" rel="noopener" class="citation-link">View article <i class="fas fa-external-link-alt"></i></a>` : ''}
+                          </div>
+                        </li>
+                      `;
+                    });
+                    
+                    citationsHTML += `</ul>`;
+                    
+                    if (totalCitations > 10) {
+                      citationsHTML += `
+                        <div class="text-center mt-3">
+                          <a href="https://www.ebi.ac.uk/europepmc/webservices/rest/${pmid}/citations" target="_blank" rel="noopener" class="btn btn-outline-primary">
+                            View All ${totalCitations} Citations <i class="fas fa-external-link-alt ms-1"></i>
+                          </a>
+                        </div>
+                      `;
+                    }
+                  }
+                  
+                  citationsHTML += `</div></div></div>`;
+                  articleBody.insertAdjacentHTML('beforeend', citationsHTML);
+                  
+                  // Set citation content with properly rendered HTML after the elements are created
+                  if (citations.length > 0) {
+                    setTimeout(() => {
+                      displayCitations.forEach((citation, index) => {
+                        const citationId = citation.id || index;
+                        const titleElement = articleBody.querySelector(`.citation-title[data-citation-id="${citationId}"]`);
+                        const authorsElement = articleBody.querySelector(`.citation-authors[data-citation-id="${citationId}"]`);
+                        const journalElement = articleBody.querySelector(`.citation-journal[data-citation-id="${citationId}"]`);
+                        
+                        if (titleElement) titleElement.innerHTML = citation.title || 'No title available';
+                        if (authorsElement) authorsElement.innerHTML = citation.authorString || 'Unknown authors';
+                        if (journalElement) journalElement.innerHTML = citation.journalTitle || '';
+                      });
+                    }, 0);
+                  }
+                } else {
+                  // Fallback if citationData is completely missing
+                  const citationsErrorHTML = `
+                    <div class="mb-3">
+                      <div class="collapsible-section">
+                        <button class="btn btn-outline-secondary collapse-toggle" disabled>
+                          <span><i class="fas fa-quote-right me-2"></i>Citations</span>
+                          <small class="ms-2 text-muted">Citation information unavailable</small>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  articleBody.insertAdjacentHTML('beforeend', citationsErrorHTML);
+                }
+              } catch (err) {
+                console.warn("Error fetching citations for PMID " + pmid + ": " + err.message);
+                
+                // Clear the loading indicator if it exists
+                const loadingElement = document.getElementById(`citations-loading-${pmid}`);
+                if (loadingElement) {
+                  loadingElement.remove();
+                }
+                
+                // Display user-friendly error message
+                const articleBody = document.querySelector(`.article-card[data-pmid="${pmid}"] .article-body`);
+                if (articleBody) {
+                  const citationsErrorHTML = `
+                    <div class="mb-3">
+                      <div class="collapsible-section">
+                        <button class="btn btn-outline-secondary collapse-toggle" disabled>
+                          <span><i class="fas fa-quote-right me-2"></i>Citations</span>
+                          <small class="ms-2 text-muted">Error loading citation data</small>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                  articleBody.insertAdjacentHTML('beforeend', citationsErrorHTML);
+                }
+              }
+            })(container.querySelector(`.article-card[data-pmid="${pmid}"]`), pmid);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching articles:", err);
+        document.getElementById('loading-indicator').classList.add('d-none');
+        
+        // Extract more useful error information
+        let errorMessage = "An unknown error occurred. Please try again later.";
+        if (err.message) {
+          if (err.message.includes("404")) {
+            errorMessage = "The API service is currently unavailable or the resource was not found.";
+          } else if (err.message.includes("429")) {
+            errorMessage = "Rate limit exceeded. Please wait a few minutes and try again.";
+          } else if (err.message.includes("Network Error") || err.message.includes("Failed to fetch")) {
+            errorMessage = "Network error. Please check your internet connection and try again.";
+          } else {
+            errorMessage = `Error: ${err.message}`;
+          }
+        }
+        
+        document.getElementById('articles-container').innerHTML += `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>${errorMessage}
+          </div>
+        `;
+      }
+    }
+    
+    // --- Badge Initialization ---
+    function initializeBadges(selectedFields) {
+      console.log("Initializing badges with selected fields:", selectedFields);
+      
+      // Check if reload badges button exists before trying to use it
+      const reloadBadgesBtn = document.getElementById('reload-badges-btn');
+      if (reloadBadgesBtn) {
+        reloadBadgesBtn.style.display = 'inline-block';
+        reloadBadgesBtn.onclick = function() {
+        console.log("Manual badge reload requested");
+        
+        // Directly call badge initialization functions
+        if (selectedFields.includes("dimensions") && typeof __dimensions_embed !== 'undefined') {
+          __dimensions_embed.addBadges();
+        }
+        
+        if (selectedFields.includes("altmetric") && typeof _altmetric_embed_init === 'function') {
+          _altmetric_embed_init();
+        }
+        
+        if (selectedFields.includes("plumxDetails")) {
+          try {
+            if (window.__plumX && window.__plumX.widgets && typeof window.__plumX.widgets.init === 'function') {
+              console.log("Initializing PlumX Summary Widget");
+              window.__plumX.widgets.init();
+            } else {
+              console.warn("PlumX Summary Widget initialization method not available");
+            }
+          } catch (e) {
+            console.error("Error initializing PlumX Summary Widget:", e);
+          }
+        }
+        
+        if (selectedFields.includes("sciteBadge") && typeof scite !== 'undefined') {
+          scite.init();
+        }
+        
+        showToast("Badges reloaded successfully");
+      };
+      }
+      
+      // Initialize Dimensions badges
+      if (selectedFields.includes("dimensions") && typeof __dimensions_embed !== 'undefined') {
+        try {
+          console.log("Initializing Dimensions badges");
+          __dimensions_embed.addBadges();
+        } catch (e) {
+          console.error("Error initializing Dimensions badges:", e);
+        }
+      }
+      
+      // Initialize Altmetric badges
+      if (selectedFields.includes("altmetric")) {
+        try {
+          console.log("Checking for Altmetric initialization function");
+          // Give some time for the Altmetric script to fully initialize
+          setTimeout(() => {
+            if (typeof _altmetric_embed_init === 'function' && !window._altmetric_embed_init_called) {
+              console.log("Initializing Altmetric badges");
+              window._altmetric_embed_init_called = true;
+              _altmetric_embed_init();
+            } else {
+              console.log("Altmetric initialization function not available or already called");
+            }
+          }, 500);
+        } catch (e) {
+          console.error("Error initializing Altmetric badges:", e);
+        }
+      }
+      
+      // Initialize PlumX Summary Widget
+      if (selectedFields.includes("plumxDetails")) {
+        try {
+          console.log("Initializing PlumX Summary Widget");
+          if (window.__plumX && window.__plumX.widgets && typeof window.__plumX.widgets.init === 'function') {
+            window.__plumX.widgets.init();
+          } else {
+            console.warn("PlumX Summary Widget initialization method not available");
+          }
+        } catch (e) {
+          console.error("Error initializing PlumX Summary Widget:", e);
+        }
+      }
+      
+      // Initialize Scite badges
+      if (selectedFields.includes("sciteBadge")) {
+        try {
+          console.log("Attempting to initialize Scite badges");
+          
+          // Skip initialization if we're rate limited
+          if (window._sciteRateLimited && window._sciteRetryCount >= window._sciteMaxRetries) {
+            console.warn("Skipping Scite badge initialization due to rate limiting");
+            return;
+          }
+          
+          // Check if the script was loaded
+          if (typeof scite !== 'undefined') {
+            console.log("Scite script loaded successfully, initializing badges");
+            
+            // Add event listener to watch for 429 errors during initialization
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+              return originalFetch.apply(this, args)
+                .then(response => {
+                  if (response.status === 429 && args[0].includes('scite.ai')) {
+                    console.warn('Scite API returned 429 during fetch');
+                    window._sciteRateLimited = true;
+                    window._sciteRetryCount++;
+                    
+                    // Show rate limit error in badges
+                    if (window._sciteRetryCount >= window._sciteMaxRetries) {
+                      const badges = document.querySelectorAll('.scite-badge');
+                      badges.forEach(badge => {
+                        const doi = badge.getAttribute('data-doi');
+                        badge.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> Rate limited by Scite API.</p>
+                        <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View on Scite.ai instead</a>`;
+                      });
+                    }
+                    
+                    showToast("Scite API rate limited. Try again later.", "warning");
+                  }
+                  return response;
+                });
+            };
+            
+            scite.init();
+            
+            // Restore original fetch after a delay
+            setTimeout(() => {
+              window.fetch = originalFetch;
+            }, 5000);
+          } else {
+            console.warn("Scite script not loaded properly. Attempting to reload the script.");
+            // Reload the script if it's not loaded, with rate limit handling
+            if (!window._sciteRateLimited) {
+              loadSciteScript()
+                .then(() => {
+                  if (typeof scite !== 'undefined') {
+                    console.log("Scite script reloaded, initializing badges");
+                    scite.init();
+                  } else {
+                    console.error("Failed to load Scite script after retry");
+                  }
+                })
+                .catch(e => console.error("Error reloading Scite script:", e));
+            } else {
+              console.warn("Not reloading Scite script due to active rate limiting");
+            }
+          }
+        } catch (e) {
+          console.error("Error initializing Scite badges:", e);
+        }
+      }
+    }
+    
+    // Save current checkbox settings to localStorage
+    function saveCurrentSettings() {
+      try {
+        const selectedFields = getSelectedFields();
+        const articlesCount = document.getElementById('articles-count').value || 10;
+        const settings = {
+          selectedFields,
+          articlesCount
+        };
+        localStorage.setItem('IJCVI_settings', JSON.stringify(settings));
+        console.log('Settings saved to localStorage');
+      } catch (e) {
+        console.warn('Failed to save settings:', e);
+      }
+    }
+    
+    // Load saved settings from localStorage
+    function loadSavedSettings() {
+      try {
+        const savedSettings = localStorage.getItem('IJCVI_settings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          console.log('Loading saved settings:', settings);
+          
+          // Apply saved field selections
+          if (settings.selectedFields && Array.isArray(settings.selectedFields)) {
+            settings.selectedFields.forEach(field => {
+              const checkbox = document.querySelector(`#field-${field}`);
+              if (checkbox) {
+                checkbox.checked = true;
+              }
+            });
+          }
+          
+          // Apply saved articles count
+          if (settings.articlesCount) {
+            const articlesCountInput = document.getElementById('articles-count');
+            if (articlesCountInput) {
+              articlesCountInput.value = settings.articlesCount;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load settings:', e);
+      }
+    }
+    
+    // Toast function implementation
+    function showToast(message, type = 'success') {
+      // Create toast container if it doesn't exist
+      let toastContainer = document.getElementById('toast-container');
+      if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+      }
+      
+      // Set toast class based on type
+      let toastClass = 'bg-success';
+      let iconClass = 'fas fa-check-circle';
+      
+      if (type === 'warning') {
+        toastClass = 'bg-warning text-dark';
+        iconClass = 'fas fa-exclamation-triangle';
+      } else if (type === 'error') {
+        toastClass = 'bg-danger';
+        iconClass = 'fas fa-times-circle';
+      } else if (type === 'info') {
+        toastClass = 'bg-info text-dark';
+        iconClass = 'fas fa-info-circle';
+      }
+      
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = `toast ${toastClass} text-white`;
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
+      toast.setAttribute('aria-atomic', 'true');
+      
+      toast.innerHTML = `
+        <div class="toast-header ${toastClass} text-white">
+          <i class="${iconClass} me-2"></i>
+          <strong class="me-auto">Codex Editoris</strong>
+          <small>${new Date().toLocaleTimeString()}</small>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          ${message}
+        </div>
+      `;
+      
+      // Add toast to container
+      toastContainer.appendChild(toast);
+      
+      // Initialize and show the toast
+      const bsToast = new bootstrap.Toast(toast, {
+        autohide: true,
+        delay: 5000
+      });
+      bsToast.show();
+      
+      // Remove toast after it's hidden
+      toast.addEventListener('hidden.bs.toast', function () {
+        toast.remove();
+      });
+    }
+  </script>
+  
+  <!-- Load Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Initialize app on DOM load -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+      
+      // Load saved settings from localStorage
+      loadSavedSettings();
+      
+      // Set current date in footer
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString();
+      
+      // Preload Altmetric script - this helps with initialization issues
+      if (document.getElementById('field-altmetric') && document.getElementById('field-altmetric').checked) {
+        console.log("Preloading Altmetric script...");
+        loadScript("https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js")
+          .then(() => console.log("Altmetric script preloaded successfully"))
+          .catch(err => console.error("Error preloading Altmetric script:", err));
+      }
+      
+      // Setup intersection observer for lazy loading
+      const loadMoreTrigger = document.querySelector('#load-more-trigger');
+      if (loadMoreTrigger) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              loadMoreArticles();
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {rootMargin: "200px"});
+        
+        observer.observe(loadMoreTrigger);
+      }
+      
+      // Attempt to initialize badges again after page is fully loaded
+      setTimeout(function() {
+        console.log("Running delayed badge initialization...");
+        const selectedFields = getSelectedFields();
+        if (selectedFields.includes("sciteBadge")) {
+          console.log("Checking Scite badge status for delayed initialization...");
+          
+          // Skip if we've been rate limited
+          if (window._sciteRateLimited && window._sciteRetryCount >= window._sciteMaxRetries) {
+            console.warn("Skipping delayed Scite badge initialization due to rate limiting");
+            
+            // Update all badge containers with fallback message
+            const badges = document.querySelectorAll('.scite-badge');
+            if (badges.length > 0) {
+              console.log(`Found ${badges.length} Scite badge containers to update with fallback message`);
+              badges.forEach(badge => {
+                const doi = badge.getAttribute('data-doi');
+                if (!badge.innerHTML.trim()) {
+                  badge.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> Scite API rate limited.</p>
+                  <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View on Scite.ai instead</a>`;
+                }
+              });
+            }
+            return;
+          }
+          
+          // Check if any badges are empty and need initialization
+          const badges = document.querySelectorAll('.scite-badge');
+          const emptyBadges = Array.from(badges).filter(badge => !badge.innerHTML.trim());
+          
+          if (emptyBadges.length > 0) {
+            console.log(`Found ${emptyBadges.length} empty Scite badge containers that need initialization`);
+            
+            if (typeof scite !== 'undefined') {
+              console.log("Reinitializing Scite badges in delayed initializer");
+              scite.init();
+            } else {
+              console.warn("Scite object still not available for delayed initialization");
+              
+              // Only try to reload if we're not rate limited
+              if (!window._sciteRateLimited) {
+                loadSciteScript()
+                  .then(() => {
+                    if (typeof scite !== 'undefined') {
+                      console.log("Scite script loaded in delayed initializer, initializing badges");
+                      scite.init();
+                    } else {
+                      console.error("Failed to load Scite script in delayed initializer");
+                      // Show fallback message for badges
+                      emptyBadges.forEach(badge => {
+                        const doi = badge.getAttribute('data-doi');
+                        badge.innerHTML = `<p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Unable to load Scite badge.</p>
+                        <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View on Scite.ai instead</a>`;
+                      });
+                    }
+                  })
+                  .catch(e => {
+                    console.error("Error loading Scite script in delayed initializer:", e);
+                    // Show fallback message for badges
+                    emptyBadges.forEach(badge => {
+                      const doi = badge.getAttribute('data-doi');
+                      badge.innerHTML = `<p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Unable to load Scite badge.</p>
+                      <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View on Scite.ai instead</a>`;
+                    });
+                  });
+              } else {
+                console.warn("Not reloading Scite script in delayed initializer due to active rate limiting");
+                // Show rate limit message
+                emptyBadges.forEach(badge => {
+                  const doi = badge.getAttribute('data-doi');
+                  badge.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-circle"></i> Scite API rate limited.</p>
+                  <a href="https://scite.ai/reports/${doi}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary mt-2">View on Scite.ai instead</a>`;
+                });
+              }
+            }
+          } else {
+            console.log("No empty Scite badge containers found, skipping delayed initialization");
+          }
+        }
+      }, 2000); // 2 second delay
+    });
+  </script>
+  
+  <!-- Toast container for notifications -->
+  <div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+  </body>
+</html>

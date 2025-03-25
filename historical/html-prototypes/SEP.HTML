@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SerpAPI Fetch Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>SerpAPI Fetch via Fetch API</h1>
+  <button id="fetchBtn">Get JSON Data</button>
+  <pre id="output">Click the button to load data...</pre>
+
+  <script>
+    document.getElementById('fetchBtn').addEventListener('click', function() {
+      const apiKey = "0c75cdc276962c1f0bbd447311b328d96729ef6103062d555aec7552885298d8";
+      const params = new URLSearchParams({
+        api_key: apiKey,
+        engine: "google",
+        q: "Coffee",
+        location: "Austin, Texas, United States",
+        google_domain: "google.com",
+        gl: "us",
+        hl: "en"
+      });
+      
+      const url = "https://serpapi.com/search.json?" + params.toString();
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+          console.log(data);
+        })
+        .catch(error => {
+          document.getElementById('output').textContent = 'Error: ' + error.message;
+          console.error('Fetch error:', error);
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,2075 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholar Data Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed"></script>
+    <style>
+        /* Unified typography and spacing */
+        :root {
+            --font-size-header: 15px;
+            --font-size-normal: 13px;
+            --font-size-small: 12px;
+            --padding-standard: 16px;
+            --gap-standard: 12px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --metro-primary: #0078D4;
+            --metro-secondary: #106EBE;
+            --metro-bg: #F5F5F5;
+            --container-max-width: 98vw;
+        }
+
+        /* Level 2: Summary Report styling */
+        .summary-section {
+            padding: var(--padding-standard);
+        }
+
+        .summary-section h2 {
+            font-size: var(--font-size-header);
+            font-weight: 500;
+            margin: 0 0 var(--gap-standard) 0;
+            color: var(--color-text);
+        }
+
+        .summary-table-container table {
+            font-size: var(--font-size-normal);
+        }
+
+        .summary-table-container th,
+        .summary-table-container td {
+            padding: 8px var(--padding-standard);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        /* Level 3: Data Tables styling */
+        .data-card {
+            padding: var(--padding-standard);
+        }
+
+        .card-header {
+            margin-bottom: var(--gap-standard);
+        }
+
+        .card-header h3 {
+            font-size: var(--font-size-header);
+            font-weight: 500;
+            margin: 0;
+            color: var(--color-text);
+        }
+
+        .data-table-container table {
+            font-size: var(--font-size-normal);
+        }
+
+        .data-table-container th,
+        .data-table-container td {
+            padding: 8px var(--padding-standard);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        /* Unified table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #F5F5F5;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td {
+            background: white;
+        }
+
+        /* Unified container styles */
+        .summary-section,
+        .data-card {
+            background: white;
+            border-radius: 2px;
+            box-shadow: var(--shadow-1);
+        }
+
+        /* Download buttons */
+        .download-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .download-btn {
+            font-size: var(--font-size-small);
+            padding: 4px 8px;
+        }
+
+        /* Chart container adjustments */
+        .visualization-container {
+            padding: var(--padding-standard);
+            gap: var(--gap-standard);
+        }
+
+        .chart-wrapper {
+            padding: var(--padding-standard);
+        }
+
+        /* Spacing adjustments */
+        .data-grid {
+            gap: var(--gap-standard);
+        }
+
+        .content-wrapper {
+            gap: var(--gap-standard);
+        }
+
+        /* Table hover effects */
+        tr:hover td {
+            background: #F8F9FA;
+        }
+
+        /* Scrollbar styling */
+        .data-table-container::-webkit-scrollbar,
+        .summary-table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .data-table-container::-webkit-scrollbar-track,
+        .summary-table-container::-webkit-scrollbar-track {
+            background: #F5F5F5;
+        }
+
+        .data-table-container::-webkit-scrollbar-thumb,
+        .summary-table-container::-webkit-scrollbar-thumb {
+            background: #BDBDBD;
+            border-radius: 4px;
+        }
+
+        .data-table-container::-webkit-scrollbar-thumb:hover,
+        .summary-table-container::-webkit-scrollbar-thumb:hover {
+            background: #9E9E9E;
+        }
+
+        /* Add loading state styles */
+        .visualization-container {
+            position: relative;
+            min-height: 250px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Updated header styles */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: linear-gradient(to right, #FFFFFF, #F8F9FA);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            border-bottom: 1px solid #E9ECEF;
+            margin-bottom: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .author-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2C3E50;
+            margin: 0;
+            padding: 0;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .author-name::after {
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            height: 24px;
+            width: 1px;
+            background: #DEE2E6;
+            transform: translateY(-50%);
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 8px;
+            padding: 0 4px;
+        }
+
+        .metro-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(33, 150, 243, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metro-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .metro-button:hover {
+            background: #1976D2;
+            box-shadow: 0 2px 5px rgba(33, 150, 243, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .metro-button:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .metro-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(33, 150, 243, 0.2);
+        }
+
+        .header-right {
+            text-align: right;
+            padding: 0 4px;
+        }
+
+        .header-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #2C3E50;
+            margin: 0 0 4px 0;
+            letter-spacing: 0.2px;
+        }
+
+        .header-copyright {
+            font-size: 12px;
+            color: #6C757D;
+            margin: 0;
+            letter-spacing: 0.1px;
+            line-height: 1.4;
+        }
+
+        .header-copyright a {
+            color: #2196F3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .header-copyright a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #2196F3;
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+            transform-origin: right;
+        }
+
+        .header-copyright a:hover {
+            color: #1976D2;
+        }
+
+        .header-copyright a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Add subtle animation for header on page load */
+        @keyframes headerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-container {
+            animation: headerFadeIn 0.5s ease forwards;
+        }
+
+        /* Add responsive adjustments */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .author-name::after {
+                display: none;
+            }
+
+            .control-panel {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .header-right {
+                text-align: center;
+            }
+        }
+
+        /* Update button and container styles */
+        .dashboard-container {
+            padding: var(--spacing-xs);
+            background: var(--metro-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+        }
+
+        /* Updated button styles */
+        .metro-button {
+            background: var(--metro-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .metro-button:hover {
+            background: var(--metro-secondary);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+        }
+
+        .metro-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Updated data grid and card styles */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--spacing-xs);
+            width: 100%;
+        }
+
+        .data-card {
+            background: white;
+            padding: var(--spacing-sm);
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: calc(100vh - 400px);
+            display: flex;
+            flex-direction: column;
+            min-width: 0; /* Prevent overflow */
+        }
+
+        .data-table-container {
+            flex: 1;
+            overflow: auto;
+            margin-top: var(--spacing-xs);
+            min-width: 0; /* Prevent overflow */
+        }
+
+        /* Table styles for better fit */
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* Column widths */
+        th:nth-child(1), td:nth-child(1) { width: 30%; } /* Title */
+        th:nth-child(2), td:nth-child(2) { width: 25%; } /* Authors */
+        th:nth-child(3), td:nth-child(3) { width: 10%; } /* Year */
+        th:nth-child(4), td:nth-child(4) { width: 10%; } /* Citations */
+        th:nth-child(5), td:nth-child(5) { width: 25%; } /* Venue/DOI */
+
+        /* Tooltip for truncated content */
+        td {
+            position: relative;
+        }
+
+        td:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background: #333;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            z-index: 1000;
+            max-width: 300px;
+            word-wrap: break-word;
+            white-space: normal;
+            font-size: 11px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Card header styles */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .download-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* Keep existing base styles but update layout structure */
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--spacing-unit) * 2);
+            padding: calc(var(--spacing-unit) * 2);
+            max-width: 100%;
+        }
+
+        /* Level 1: Header */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: calc(var(--spacing-unit) * 2);
+            background: white;
+            box-shadow: var(--shadow-1);
+            margin-bottom: 0;
+        }
+
+        /* Level 2: Summary Report */
+        .summary-section {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--spacing-unit) * 2);
+        }
+
+        .summary-report-container {
+            background: white;
+            padding: calc(var(--spacing-unit) * 3);
+            box-shadow: var(--shadow-1);
+        }
+
+        .summary-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Level 2: Charts */
+        .visualization-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: calc(var(--spacing-unit) * 2);
+            background: white;
+            padding: calc(var(--spacing-unit) * 3);
+            box-shadow: var(--shadow-1);
+        }
+
+        .chart-wrapper {
+            height: 250px;
+            padding: calc(var(--spacing-unit) * 2);
+            background: #F5F5F5;
+        }
+
+        /* Level 3: Data Tables */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: calc(var(--spacing-unit) * 2);
+        }
+
+        .data-card {
+            background: white;
+            padding: calc(var(--spacing-unit) * 2);
+            box-shadow: var(--shadow-1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 700px);
+            min-height: 400px;
+        }
+
+        /* Update container structure */
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--spacing-unit) * 2);
+        }
+
+        /* Add styles for query builder */
+        .query-builder {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .query-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .metro-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .api-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        /* Add loading indicator styles */
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Level 1: Header -->
+        <div class="header-container">
+            <div class="header-left">
+                <p class="author-name">Steffen E. Petersen</p>
+                <div class="control-panel">
+                    <button class="metro-button" onclick="fetchGoogleScholar()">Google Scholar</button>
+                    <button class="metro-button" onclick="fetchEuroPMC()">EuroPMC</button>
+                    <button class="metro-button" onclick="fetchCrossRef()">CrossRef</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <p class="header-title">Codex Editoris Vitae</p>
+                <p class="header-copyright">To AIA. © <a href="https://www.theadimension.com" target="_blank" rel="noopener">The Adimension</a> 2025.</p>
+            </div>
+        </div>
+
+        <!-- Add the query builder interface after the header-container div -->
+        <div class="query-builder">
+            <div class="query-form">
+                <div class="form-group">
+                    <label for="searchType">Search Type:</label>
+                    <select id="searchType" class="metro-input">
+                        <option value="author">Author Name</option>
+                        <option value="journal">Journal</option>
+                        <option value="orcid">ORCID</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="searchQuery">Search Query:</label>
+                    <input type="text" id="searchQuery" class="metro-input" placeholder="Enter search term...">
+                </div>
+                <div class="form-group">
+                    <label for="resultLimit">Number of Results:</label>
+                    <input type="number" id="resultLimit" class="metro-input" value="10" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label for="sortOrder">Sort Order:</label>
+                    <select id="sortOrder" class="metro-input">
+                        <option value="recent">Most Recent</option>
+                        <option value="cited">Most Cited</option>
+                        <option value="old">Oldest First</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="altmetricApiKey">Altmetric API Key:</label>
+                    <input type="text" id="altmetricApiKey" class="metro-input" placeholder="Enter Altmetric API Key">
+                </div>
+                <div class="form-group">
+                    <label for="plumxApiKey">PlumX API Key:</label>
+                    <input type="text" id="plumxApiKey" class="metro-input" placeholder="Enter PlumX API Key">
+                </div>
+                <div class="form-group">
+                    <label for="dimensionsApiKey">Dimensions API Key:</label>
+                    <input type="text" id="dimensionsApiKey" class="metro-input" placeholder="Enter Dimensions API Key">
+                </div>
+            </div>
+            <div class="api-buttons">
+                <button class="metro-button" onclick="fetchEuroPMC(getSearchQuery(), getOrcidId(), getResultLimit())">Europe PMC</button>
+                <button class="metro-button" onclick="fetchCrossRef(getSearchQuery(), getResultLimit())">CrossRef</button>
+                <button class="metro-button" onclick="fetchDataCite(getSearchQuery(), getOrcidId(), getResultLimit())">DataCite</button>
+                <button class="metro-button" onclick="fetchOpenCitations(undefined, getSearchQuery(), getResultLimit())">OpenCitations</button>
+                <button class="metro-button" onclick="fetchAltmetric(undefined)">Altmetric</button>
+                <button class="metro-button" onclick="fetchPlumX(undefined)">PlumX</button>
+                <button class="metro-button" onclick="fetchScite(undefined, getSearchQuery())">Scite</button>
+                <button class="metro-button" onclick="fetchSemanticScholar(undefined)">Semantic Scholar</button>
+                <button class="metro-button" onclick="fetchDimensions(getSearchQuery(), getResultLimit())">Dimensions</button>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Level 2: Summary Report -->
+            <div class="summary-section">
+                <div class="summary-report-container">
+                    <h2>Summary Report</h2>
+                    <div class="summary-table-container">
+                        <table id="summary-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable">Data Source</th>
+                                    <th class="sortable">Processing Time (s)</th>
+                                    <th class="sortable">Articles Retrieved</th>
+                                    <th class="sortable">Total Citations</th>
+                                    <th class="sortable">Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summary-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Level 2: Charts -->
+                <div class="visualization-container">
+                    <div class="chart-wrapper">
+                        <canvas id="citations-chart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="yearly-publications-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level 3: Data Tables -->
+            <div class="data-grid">
+                <!-- Google Scholar -->
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Google Scholar Data</h3>
+                        <div class="download-buttons">
+                            <button class="download-btn" onclick="downloadData('googleScholar', 'csv')">CSV</button>
+                            <button class="download-btn" onclick="downloadData('googleScholar', 'json')">JSON</button>
+                        </div>
+                    </div>
+                    <div class="data-table-container">
+                        <div class="loading-overlay"><div class="loading-spinner"></div></div>
+                        <table id="gs-table"></table>
+                    </div>
+                </div>
+
+                <!-- EuroPMC -->
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>EuroPMC Data</h3>
+                        <div class="download-buttons">
+                            <button class="download-btn" onclick="downloadData('euroPMC', 'csv')">CSV</button>
+                            <button class="download-btn" onclick="downloadData('euroPMC', 'json')">JSON</button>
+                        </div>
+                    </div>
+                    <div class="data-table-container">
+                        <div class="loading-overlay"><div class="loading-spinner"></div></div>
+                        <table id="pmc-table"></table>
+                    </div>
+                </div>
+
+                <!-- CrossRef -->
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>CrossRef Data</h3>
+                        <div class="download-buttons">
+                            <button class="download-btn" onclick="downloadData('crossRef', 'csv')">CSV</button>
+                            <button class="download-btn" onclick="downloadData('crossRef', 'json')">JSON</button>
+                        </div>
+                    </div>
+                    <div class="data-table-container">
+                        <div class="loading-overlay"><div class="loading-spinner"></div></div>
+                        <table id="crossref-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('jsonFiles').addEventListener('change', function(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            let allData = [];
+            let filesProcessed = 0;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const jsonData = JSON.parse(e.target.result);
+                    if (jsonData.organic_results) {
+                        allData.push(...jsonData.organic_results);
+                    }
+                    filesProcessed++;
+                    if (filesProcessed === files.length) {
+                        processData(allData);
+                    }
+                };
+                reader.readAsText(file);
+            });
+        });
+
+        function processData(data) {
+            if (!data || data.length === 0) return;
+            displaySummary(data);
+            displayGoogleScholarTable(data);
+            generateCitationsChart(data);
+            generateYearlyPublicationsChart(data);
+            generateAdjacencyMatrix(data);
+        }
+
+        function displayTable(data) {
+            // Basic table display - you can customize this
+            const tableContainer = document.getElementById('table-container');
+            let tableHTML = '<table><thead><tr><th>Title</th><th>Authors</th><th>Link</th><th>Cited By</th></tr></thead><tbody>';
+            data.forEach(item => {
+                const authors = item.publication_info?.authors?.map(author => author.name).join(', ') || 'N/A';
+                const citedBy = item.inline_links?.cited_by?.total || 'N/A';
+                tableHTML += '<tr><td>' + item.title + '</td><td>' + authors + '</td><td><a href="' + item.link + '" target="_blank">Link</a></td><td>' + citedBy + '</td></tr>';
+            });
+            tableHTML += '</tbody></table>';
+            tableContainer.innerHTML = tableHTML;
+        }
+
+        function generateBarChart(data) {
+            // Example: Bar chart of publication years (you might need to extract year from 'publication_info.summary')
+            const years = data.map(item => {
+                const summary = item.publication_info?.summary;
+                if (summary) {
+                    const yearMatch = summary.match(/, (\d{4}) -/); // Regex to find year
+                    return yearMatch ? parseInt(yearMatch[1]) : null;
+                }
+                return null;
+            }).filter(year => year !== null);
+
+            const yearCounts = {};
+            years.forEach(year => {
+                yearCounts[year] = (yearCounts[year] || 0) + 1;
+            });
+
+            const labels = Object.keys(yearCounts);
+            const chartData = Object.values(yearCounts);
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Publications per Year',
+                        data: chartData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Publications'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generatePieChart(data) {
+            // Example: Pie chart of publication types (you might need to infer types or use 'type' field if available)
+            const publicationTypes = data.map(item => item.type || 'Unknown'); // Using 'type' field if available, else 'Unknown'
+            const typeCounts = {};
+            publicationTypes.forEach(type => {
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            });
+
+            const labels = Object.keys(typeCounts);
+            const chartData = Object.values(typeCounts);
+            const backgroundColors = [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(201, 203, 207, 0.8)'
+            ];
+
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Publication Types',
+                        data: chartData,
+                        backgroundColor: backgroundColors,
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Publication Types Distribution'
+                        }
+                    }
+                },
+            });
+        }
+
+        function generateAdjacencyMatrix(coAuthorsData) {
+            let allCoAuthors = [];
+            coAuthorsData.forEach(item => {
+                const authors = item.publication_info?.authors?.map(author => author.name) || [];
+                if (authors.length > 0) {
+                    allCoAuthors.push(authors);
+                }
+            });
+
+            let nodes = [], links = [];
+            let nodeIndex = {};
+            let index = 0;
+
+            allCoAuthors.forEach(authorsList => {
+                authorsList.forEach(author => {
+                    if (!nodeIndex[author]) {
+                        nodeIndex[author] = index++;
+                        nodes.push({ name: author, index: nodeIndex[author] });
+                    }
+                });
+            });
+
+            allCoAuthors.forEach(authorsList => {
+                for (let i = 0; i < authorsList.length; i++) {
+                    for (let j = i + 1; j < authorsList.length; j++) {
+                        links.push({ source: nodeIndex[authorsList[i]], target: nodeIndex[authorsList[j]] });
+                    }
+                }
+            });
+
+            const spec = {
+                "$schema": "https://vega.github.io/schema/vega/v5.json",
+                "width": 770,
+                "height": 770,
+                "padding": 2,
+                "data": [
+                    { "name": "nodes", "values": nodes },
+                    { "name": "links", "values": links }
+                ],
+                "scales": [
+                    { "name": "position", "type": "band", "domain": {"data": "nodes", "field": "index"}, "range": "width" },
+                    { "name": "color", "type": "ordinal", "range": "category", "domain": {"data": "nodes", "field": "name"} }
+                ],
+                "marks": [
+                    {
+                        "type": "rect",
+                        "from": { "data": "links" },
+                        "encode": {
+                            "update": {
+                                "x": { "scale": "position", "field": "source" },
+                                "y": { "scale": "position", "field": "target" },
+                                "width": { "value": 10 },
+                                "height": { "value": 10 },
+                                "fill": { "scale": "color", "field": "source" }
+                            }
+                        }
+                    }
+                ]
+            };
+
+            vegaEmbed("#adjacency-matrix", spec);
+        }
+
+        // Add chart fullscreen functionality
+        function toggleFullscreen(chartId) {
+            const wrapper = document.getElementById(chartId).parentElement;
+            
+            if (!wrapper.classList.contains('fullscreen-chart')) {
+                // Create fullscreen container
+                const fullscreenDiv = document.createElement('div');
+                fullscreenDiv.className = 'fullscreen-chart';
+                
+                // Add header with close button
+                const header = document.createElement('div');
+                header.className = 'fullscreen-header';
+                const closeButton = document.createElement('button');
+                closeButton.className = 'close-fullscreen';
+                closeButton.textContent = 'Close';
+                closeButton.onclick = () => {
+                    document.body.removeChild(fullscreenDiv);
+                    // Restore chart in original container
+                    wrapper.appendChild(document.getElementById(chartId));
+                    updateVisualization();
+                };
+                header.appendChild(closeButton);
+                
+                // Add content container
+                const content = document.createElement('div');
+                content.className = 'fullscreen-content';
+                
+                // Move the chart
+                content.appendChild(document.getElementById(chartId));
+                
+                fullscreenDiv.appendChild(header);
+                fullscreenDiv.appendChild(content);
+                document.body.appendChild(fullscreenDiv);
+                
+                // Update chart for fullscreen
+                updateVisualization(true);
+            }
+        }
+
+        // Add click listeners to charts
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartWrappers = document.querySelectorAll('.chart-wrapper');
+            chartWrappers.forEach(wrapper => {
+                wrapper.onclick = () => {
+                    const chartCanvas = wrapper.querySelector('canvas');
+                    if (chartCanvas) {
+                        toggleFullscreen(chartCanvas.id);
+                    }
+                };
+            });
+        });
+
+        // Update chart initialization
+        function updateVisualization(isFullscreen = false) {
+            destroyExistingCharts();
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        font: {
+                            size: isFullscreen ? 24 : 14
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            font: {
+                                size: isFullscreen ? 16 : 12
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Create citations chart with updated options
+            const citationsChart = new Chart(
+                document.getElementById('citations-chart').getContext('2d'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Publications per Year',
+                            data: [],
+                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: chartOptions
+                }
+            );
+
+            // Create yearly publications chart with updated options
+            const yearsChart = new Chart(
+                document.getElementById('yearly-publications-chart').getContext('2d'),
+                {
+                    type: 'pie',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Publication Types',
+                            data: [],
+                            backgroundColor: [],
+                            borderColor: 'rgba(255, 255, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: chartOptions
+                }
+            );
+
+            // Adjacency Matrix (Vega-Lite) - No changes needed here as it's already using loaded data
+            // generateAdjacencyMatrix(data); // This line should be called after data is fetched and processed.
+        }
+
+        function showLoading() {
+            const overlay = document.querySelector('.loading-overlay');
+            if (overlay) overlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            const overlay = document.querySelector('.loading-overlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+
+        // Update the updateVisualization function
+        async function updateVisualization(isFullscreen = false) {
+            showLoading();
+            try {
+                await destroyExistingCharts();
+                // Your existing chart creation code
+                // ...
+            } catch (error) {
+                console.error('Error updating visualizations:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function createTable(data, tableId, columns) {
+            const table = document.getElementById(tableId);
+            if (!table) {
+                console.error(`Table element with ID '${tableId}' not found.`);
+                return;
+            }
+            if (!data || !data.length) {
+                table.innerHTML = '<tr><td colspan="5">No data available</td></tr>';
+                return;
+            }
+
+            const headerRow = document.createElement('thead');
+            let headerHTML = '<tr>';
+            columns.forEach(col => {
+                headerHTML += '<th class="sortable" data-column="' + col.key + '">' + col.label + '</th>';
+            });
+            headerHTML += '</tr>';
+            headerRow.innerHTML = headerHTML;
+
+            table.innerHTML = ''; // Clear existing content
+            table.appendChild(headerRow);
+
+            const tbody = document.createElement('tbody');
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = columns.map(col =>
+                    '<td title="' + (item[col.key] || '') + '">' + (item[col.key] || '') + '</td>'
+                ).join('');
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+
+            addSortingToTable(table); // Now it's safe to call this
+        }
+
+        // Function to simulate fetching data from Google Scholar
+        function fetchGoogleScholar() {
+            try {
+                showLoading('gs-table');
+                console.log("Fetching Google Scholar data from MHTML...");
+
+                const mhtmlUrl = 'https://www.theadimension.com/Codex-Editoris/Vitae/SEP/SEP.x';
+
+                fetch(mhtmlUrl)
+                    .then(response => response.text())
+                    .then(mhtmlText => {
+                        const htmlContent = extractHtmlFromMhtml(mhtmlText);
+                        if (htmlContent) {
+                            const googleScholarData = parseGoogleScholarHtml(htmlContent);
+                            processGoogleScholarData(googleScholarData);
+                            updateSummaryTable('Google Scholar', 0.5, googleScholarData.length, sumCitations(googleScholarData));
+                        } else {
+                            console.error("Could not extract HTML content from MHTML");
+                            alert("Failed to load Google Scholar data from MHTML.");
+                        }
+                        hideLoading('gs-table');
+                    })
+                    .catch(error => {
+                        console.error("Error fetching MHTML:", error);
+                        hideLoading('gs-table');
+                        alert("Error fetching Google Scholar data. Please check console.");
+                    });
+            } catch (error) {
+                console.error("Error fetching Google Scholar data:", error);
+                alert("Failed to fetch Google Scholar data. Please try again later.");
+            }
+        }
+
+        function extractHtmlFromMhtml(mhtmlText) {
+            const htmlPartRegex = /Content-Type: text\/html[\s\S]*?<\/html>/gi;
+            const match = htmlPartRegex.exec(mhtmlText);
+            if (match && match[0]) {
+                return match[0].substring(match[0].indexOf('<html')); // Extract from <html> tag onwards
+            }
+            return null;
+        }
+
+        function parseGoogleScholarHtml(htmlContent) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlContent, 'text/html');
+            const articles = doc.querySelectorAll('.gsc_a_t'); // Selector for article titles in Scholar page
+            const authorsContainers = doc.querySelectorAll('.gsc_a_b'); // Selector for authors and venue
+            const citationContainers = doc.querySelectorAll('.gsc_a_c'); // Selector for citations
+            const yearContainers = doc.querySelectorAll('.gsc_a_y'); // Selector for year
+
+            let scholarData = [];
+
+            articles.forEach((articleElement, index) => {
+                const titleElement = articleElement.querySelector('a');
+                const title = titleElement ? titleElement.textContent : 'No Title';
+                const link = titleElement ? titleElement.href : '#';
+
+                const authorsVenue = authorsContainers[index] ? authorsContainers[index].textContent : 'No Author/Venue Info';
+                const authors = authorsVenue.split(',')[0]; // Basic author extraction - might need refinement
+                const venue = authorsVenue.substring(authorsVenue.indexOf(',') + 2); // Basic venue extraction
+
+                const citationsText = citationContainers[index] ? citationContainers[index].textContent : 'Cited by 0';
+                const citations = parseInt(citationsText.replace(/[^0-9]/g, '') || '0', 10); // Extract number from "Cited by XXX"
+
+                const year = yearContainers[index] ? yearContainers[index].textContent : 'No Year';
+
+
+                scholarData.push({
+                    title: title,
+                    authors: authors,
+                    venue: venue,
+                    year: year,
+                    citations: citations,
+                    link: link // Add link if available
+                });
+            });
+            return scholarData;
+        }
+
+        function processGoogleScholarData(data) {
+            if (!data || data.length === 0) return;
+            displayGoogleScholarTable(data);
+            updateCitationsChart(data, 'citations-chart');
+            updateYearlyPublicationsChart(data, 'yearly-publications-chart');
+            generateAdjacencyMatrix(data);
+        }
+
+        /**
+         * Displays paginated Google Scholar data in the table.
+         * @param {Array} data - The Google Scholar data array.
+         * @param {number} page - The current page number.
+         * @param {number} pageSize - The number of items per page.
+         */
+        function displayGoogleScholarTable(data, page, pageSize) {
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const paginatedData = data.slice(startIndex, endIndex);
+            
+            const columns = [
+                { key: 'title', label: 'Title' },
+                { key: 'authors', label: 'Authors' },
+                { key: 'year', label: 'Year' },
+                { key: 'citations', label: 'Citations' },
+                { key: 'venue', label: 'Venue' },
+                { key: 'link', label: 'Link' }
+            ];
+            createTable(paginatedData, 'gs-table', columns);
+            
+            // Add pagination controls
+            const totalPages = Math.ceil(data.length / pageSize);
+            const paginationContainer = document.createElement('div');
+            paginationContainer.className = 'pagination-container';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => displayGoogleScholarTable(data, i, pageSize));
+                paginationContainer.appendChild(pageButton);
+            }
+            
+            const gsTableContainer = document.getElementById('gs-table').parentElement;
+            gsTableContainer.appendChild(paginationContainer);
+        }
+
+        // Function to fetch data from EuroPMC
+        async function fetchEuroPMC(authorName, orcidId, resultLimit) {
+            const apiKeys = getApiKeys();
+            let baseUrl = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
+            let params = {
+                format: 'json',
+                pageSize: resultLimit,
+                sort: 'relevance',
+                resultType: 'core'
+            };
+
+            if (authorName) {
+                params.query = 'AUTH:' + authorName; // Author name query
+            } else if (orcidId) {
+                params.query = 'ORCID:' + orcidId; // ORCID query
+            } else {
+                console.warn("No author name or ORCID provided for Europe PMC search.");
+                displayErrorMessage("No author name or ORCID provided for Europe PMC search.");
+                return;
+            }
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            showLoading('pmc-table'); // Show loading indicator
+
+            try {
+                const response = await fetchWithDelay(apiUrl); // Use fetchWithDelay
+                // Check if the response is JSON before parsing
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+                    processEuroPMCData(data.resultList.result);
+                    updateSummaryTable('EuroPMC', 0, data.resultList.result.length, 0);
+                } else {
+                    const text = await response.text();
+                    console.error("Unexpected response type:", contentType, "Response text:", text);
+                    throw new Error(`Expected JSON, but received ${contentType}`);
+                }
+            } catch (error) {
+                console.error("Error fetching EuroPMC data:", error);
+                displayErrorMessage(`Failed to fetch EuroPMC data: ${error.message}`);
+                handleApiError('EuroPMC', error);
+            } finally {
+                hideLoading('pmc-table'); // Hide loading indicator
+            }
+        }
+
+        // Function to fetch data from CrossRef
+        async function fetchCrossRef(authorName, resultLimit) {
+            let baseUrl = 'https://api.crossref.org/works';
+            let params = {
+                rows: resultLimit,
+                sort: 'relevance',
+                order: 'desc'
+            };
+
+            if (authorName) {
+                params.query = authorName;
+            } else {
+                console.warn("No author name provided for Crossref search.");
+                return; // ORCID not directly supported in query
+            }
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                if (response && response.message && response.message.items) { //Check for a valid response
+                    processCrossRefData(response.message.items);
+                    updateSummaryTable('CrossRef', response.message.items.length);
+                } else {
+                    console.warn("Invalid response from CrossRef API:", response);
+                    updateSummaryTable('CrossRef', 0); // Update with 0 if no items
+                }
+            } catch (error) {
+                handleApiError('CrossRef', error);
+            }
+        }
+
+        async function processEuroPMCData(data) {
+            if (!data || data.length === 0) return;
+            const processedData = data.map(item => ({
+                title: item.title,
+                authors: item.authorString,
+                year: item.pubYear,
+                citations: item.citedByCount,
+                venue: item.journalInfo.journal.title,
+                doi: item.doi,
+                pmid: item.pmid,
+                pmcid: item.pmcid
+            }));
+            displayEuroPMCTable(processedData);
+
+            // After displaying the EuroPMC data, fetch OpenCitations, PlumX, and Semantic Scholar data for each DOI
+            processedData.forEach(item => {
+                if (item.doi) {
+                    fetchOpenCitations(item.doi);
+                    fetchPlumX(item.doi);
+                    fetchSemanticScholar(item.doi);
+                }
+            });
+        }
+
+        function processCrossRefData(data) {
+            if (!data || data.length === 0) return;
+            displayCrossRefTable(data);
+            // Charts are assumed to be based on Google Scholar data for now.
+        }
+
+        function displaySummary(allData) {
+            // This function is now redundant as summary is updated directly by fetch functions
+        }
+
+        function updateSummaryTable(dataSource, processingTime, articlesRetrieved, totalCitations) {
+            const summaryTableBody = document.getElementById('summary-table-body');
+            const now = new Date().toLocaleTimeString();
+            const newRow = summaryTableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${dataSource}</td>
+                <td>${processingTime}</td>
+                <td>${articlesRetrieved}</td>
+                <td>${totalCitations}</td>
+                <td>${now}</td>
+            `;
+        }
+
+        function sumCitations(data) {
+            return data.reduce((sum, item) => sum + (item.citations || 0), 0);
+        }
+
+        function displayEuroPMCTable(data) {
+            const columns = [
+                { key: 'title', label: 'Title' },
+                { key: 'authors', label: 'Authors' },
+                { key: 'year', label: 'Year' },
+                { key: 'citations', label: 'Citations' },
+                { key: 'venue', label: 'Venue/DOI' } // Combined Venue and DOI
+            ];
+            createTable(data, 'pmc-table', columns);
+        }
+
+        function displayCrossRefTable(data) {
+            const columns = [
+                { key: 'title', label: 'Title' },
+                { key: 'author', label: 'Authors' },
+                { key: 'year', label: 'Year' },
+                { key: 'citations', label: 'Citations' },
+                { key: 'venue', label: 'Venue/DOI' } // Combined Venue and DOI
+            ];
+            createTable(data, 'crossref-table', columns);
+        }
+
+        function updateCitationsChart(data, chartId) {
+            const years = data.map(item => item.year).filter(year => year !== undefined);
+            const yearCounts = {};
+            years.forEach(year => {
+                yearCounts[year] = (yearCounts[year] || 0) + 1;
+            });
+
+            const labels = Object.keys(yearCounts).sort(); // Sort years for chart labels
+            const chartData = labels.map(year => yearCounts[year]);
+
+            const ctx = document.getElementById(chartId).getContext('2d');
+            if (window.citationsChartInstance) { // Destroy existing chart if it exists
+                window.citationsChartInstance.destroy();
+            }
+            window.citationsChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Publications per Year',
+                        data: chartData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Publications'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function updateYearlyPublicationsChart(data, chartId) {
+            const venues = data.map(item => item.venue).filter(venue => venue !== undefined);
+            const venueCounts = {};
+            venues.forEach(venue => {
+                venueCounts[venue] = (venueCounts[venue] || 0) + 1;
+            });
+
+            const labels = Object.keys(venueCounts);
+            const chartData = Object.values(venueCounts);
+            const backgroundColors = [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(201, 203, 207, 0.8)'
+            ];
+
+            const ctx = document.getElementById(chartId).getContext('2d');
+            if (window.yearlyPublicationsChartInstance) { // Destroy existing chart if it exists
+                window.yearlyPublicationsChartInstance.destroy();
+            }
+            window.yearlyPublicationsChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Publication Venues',
+                        data: chartData,
+                        backgroundColor: backgroundColors,
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Publication Venues Distribution'
+                        }
+                    }
+                },
+            });
+        }
+
+        function showLoading(tableId) {
+            const card = document.getElementById(tableId).closest('.data-card');
+            if (card) {
+                const overlay = card.querySelector('.loading-overlay');
+                if (overlay) overlay.classList.add('active');
+            }
+        }
+
+        function hideLoading(tableId) {
+             const card = document.getElementById(tableId).closest('.data-card');
+            if (card) {
+                const overlay = card.querySelector('.loading-overlay');
+                if (overlay) overlay.classList.remove('active');
+            }
+        }
+
+        function addSortingToTable(table) {
+            const headers = table.querySelectorAll('th.sortable');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.column;
+                    const isAscending = !header.classList.contains('asc');
+
+                    // Remove sorting classes from all headers
+                    headers.forEach(h => {
+                        h.classList.remove('asc', 'desc');
+                    });
+
+                    // Add sorting class to clicked header
+                    header.classList.toggle('asc', isAscending);
+                    header.classList.toggle('desc', !isAscending);
+
+                    sortTable(table, column, isAscending);
+                });
+            });
+        }
+
+        function sortTable(table, column, isAscending) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const sortedRows = rows.sort((rowA, rowB) => {
+                const cellA = rowA.querySelector(`td:nth-child(${getColumnIndex(table, column) + 1})`).textContent.trim();
+                const cellB = rowB.querySelector(`td:nth-child(${getColumnIndex(table, column) + 1})`).textContent.trim();
+
+                const valueA = isNaN(cellA) ? cellA : Number(cellA);
+                const valueB = isNaN(cellB) ? cellB : Number(cellB);
+
+                if (isAscending) {
+                    return valueA < valueB ? -1 : (valueA > valueB ? 1 : 0);
+                } else {
+                    return valueB < valueA ? -1 : (valueB > valueA ? 1 : 0);
+                }
+            });
+
+            // Remove all existing rows and append sorted rows
+            tbody.innerHTML = '';
+            tbody.append(...sortedRows);
+        }
+
+        function getColumnIndex(table, columnKey) {
+            const headers = Array.from(table.querySelectorAll('thead th'));
+            return headers.findIndex(th => th.dataset.column === columnKey);
+        }
+
+        // Add API implementation functions
+        /**
+         * Builds the API query URL based on user input
+         * @param {string} baseUrl - The base API endpoint
+         * @param {Object} params - Additional query parameters
+         * @returns {string} The complete API URL
+         */
+        function buildApiUrl(baseUrl, params) {
+            let query = new URLSearchParams();
+
+            // Add existing parameters first
+            for (let key in params) {
+                if (params.hasOwnProperty(key)) {
+                    query.append(key, params[key]);
+                }
+            }
+          
+            const searchType = document.getElementById('searchType').value;
+            const searchQuery = document.getElementById('searchQuery').value;
+            const resultLimit = document.getElementById('resultLimit').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+
+            // Add common parameters, only if they are not already present
+            if (!query.has('limit')) {
+                query.append('limit', resultLimit);
+            }
+
+            // Add search type specific parameters, only if they are not already present
+            switch (searchType) {
+                case 'author':
+                    if (!query.has('author')) {
+                        query.append('author', searchQuery);
+                    }
+                    break;
+                case 'journal':
+                    if (!query.has('journal')) {
+                        query.append('journal', searchQuery);
+                    }
+                    break;
+                case 'orcid':
+                    if (!query.has('orcid')) {
+                        query.append('orcid', searchQuery);
+                    }
+                    break;
+            }
+
+            // Add sort order, only if they are not already present
+            switch (sortOrder) {
+                case 'recent':
+                    if (!query.has('sort')) {
+                        query.append('sort', 'date,desc');
+                    }
+                    break;
+                case 'cited':
+                    if (!query.has('sort')) {
+                        query.append('sort', 'cited,desc');
+                    }
+                    break;
+                case 'old':
+                    if (!query.has('sort')) {
+                        query.append('sort', 'date,asc');
+                    }
+                    break;
+            }
+
+            return `${baseUrl}?${query.toString()}`;
+        }
+
+        /**
+         * Generic function to fetch data from APIs
+         * @param {string} url - The API endpoint
+         * @param {Object} options - Fetch options including headers
+         * @returns {Promise} The API response
+         */
+        async function fetchApiData(url, options = {}) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    let errorMessage = `HTTP error! status: ${response.status}`;
+                    try {
+                        const errorData = await response.clone().json(); // Clone the response
+                        errorMessage += `, message: ${errorData.message || JSON.stringify(errorData)}`;
+                    } catch (parseError) {
+                        // Could not parse JSON, use text
+                        const errorText = await response.clone().text(); // Clone the response
+                        errorMessage += `, text: ${errorText}`;
+                    }
+                    throw new Error(errorMessage);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('API fetch error:', error);
+                displayErrorMessage(`API fetch error: ${error.message}`); // Display error on UI
+                throw error;
+            }
+        }
+
+        /**
+         * Handles API errors
+         * @param {string} apiName - The name of the API
+         * @param {Error} error - The error object
+         */
+        function handleApiError(apiName, error) {
+            console.error(`${apiName} API error:`, error);
+            alert(`Failed to fetch data from ${apiName}. Please try again later.`);
+        }
+
+        /**
+         * Updates the summary table with API results
+         * @param {string} apiName - The name of the API
+         * @param {number} resultCount - The number of results
+         */
+        function updateSummaryTable(apiName, resultCount) {
+            const summaryTable = document.getElementById('summary-table');
+            if (!summaryTable) return;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${apiName}</td>
+                <td>${new Date().toLocaleTimeString()}</td>
+                <td>${resultCount}</td>
+            `;
+            
+            summaryTable.querySelector('tbody').appendChild(row);
+        }
+
+        async function fetchDataCite(authorName, orcidId, resultLimit) {
+            let baseUrl = 'https://api.datacite.org/dois';
+            let params = {
+                'page[size]': resultLimit,
+                sort: 'relevance'
+            };
+
+            if (authorName) {
+                params.query = 'name:' + authorName;
+            } else if (orcidId) {
+                params.query = 'orcid:' + orcidId;
+            } else {
+                console.warn("No author name or ORCID provided for DataCite search.");
+                return;
+            }
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processDataCiteData(response.data);
+                updateSummaryTable('DataCite', response.data.length);
+            } catch (error) {
+                handleApiError('DataCite', error);
+            }
+        }
+
+        async function fetchOpenCitations(doi) {
+            let baseUrl = 'https://opencitations.net/index/api/v1/citations';
+            let params = {
+                doi: doi
+            };
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processOpenCitationsData(response);
+                updateSummaryTable('OpenCitations (citations)', response.length);
+            } catch (error) {
+                handleApiError('OpenCitations (citations)', error);
+            }
+        }
+
+        async function fetchOpenCitationsMetadata(authorName, resultLimit) {
+            let baseUrl = 'https://opencitations.net/index/api/v1/metadata';
+            let params = {
+                au: authorName,
+                limit: resultLimit
+            };
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processOpenCitationsMetadata(response);
+                updateSummaryTable('OpenCitations (metadata)', response.length);
+            } catch (error) {
+                handleApiError('OpenCitations (metadata)', error);
+            }
+        }
+
+        async function fetchAltmetric(doi) {
+            const apiKeys = getApiKeys();
+            let baseUrl = `https://api.altmetric.com/v1/doi/${doi}`;
+            let params = {
+                key: apiKeys.altmetric // Use the API key from the UI
+            };
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processAltmetricData(response);
+                updateSummaryTable('Altmetric', 1); // Assuming one DOI at a time
+            } catch (error) {
+                handleApiError('Altmetric', error);
+            }
+        }
+
+        async function fetchPlumX(doi) {
+            const apiKeys = getApiKeys();
+            let baseUrl = 'https://api.elsevier.com/analytics/plumx/details';
+            let params = {
+                metrics: 'citations,mentions,captures', // Example metrics
+                id: doi,
+                apiKey: apiKeys.plumx // Use the API key from the UI
+            };
+
+            let apiUrl = buildApiData(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processPlumXData(response);
+                updateSummaryTable('PlumX', 1); // Assuming one DOI at a time
+            } catch (error) {
+                handleApiError('PlumX', error);
+            }
+        }
+
+        async function fetchScite(doi, authorName) {
+            let baseUrl = 'https://api.scite.ai/papers';
+            let params = {};
+
+            if (doi) {
+                params.doi = doi;
+            } else if (authorName) {
+                params.query = authorName;
+            } else {
+                console.warn("No DOI or author name provided for Scite search.");
+                return;
+            }
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processSciteData(response);
+                updateSummaryTable('Scite', response.length);
+            } catch (error) {
+                handleApiError('Scite', error);
+            }
+        }
+
+        async function fetchSemanticScholar(doi) {
+            let baseUrl = `https://api.semanticscholar.org/graph/v1/paper/${doi}`;
+            let params = {
+                fields: 'title,authors,citationCount,doi,venue,year'
+            };
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processSemanticScholarData(response);
+                updateSummaryTable('Semantic Scholar (paper)', 1);
+            } catch (error) {
+                handleApiError('Semantic Scholar', error);
+            }
+        }
+
+        async function fetchSemanticScholarAuthor(authorName, resultLimit) {
+            // This is a simplified example.  Semantic Scholar author search is complex.
+            // You'd likely need to use their free-form text query and then filter.
+            let baseUrl = `https://api.semanticscholar.org/graph/v1/author/search`; // This endpoint might not exist - check API docs
+            let params = {
+                query: authorName,
+                limit: resultLimit,
+                fields: 'authorId,name,papers.title,papers.doi'
+            };
+
+            let apiUrl = buildApiUrl(baseUrl, params);
+
+            try {
+                const response = await fetchApiData(apiUrl);
+                processSemanticScholarAuthorData(response.data);
+                updateSummaryTable('Semantic Scholar (author)', response.data.length);
+            } catch (error) {
+                handleApiError('Semantic Scholar', error);
+            }
+        }
+
+        async function fetchDimensions(authorName, resultLimit) {
+            const apiKeys = getApiKeys();
+            const apiKey = apiKeys.dimensions; // Use the API key from the UI
+            const graphqlQuery = `
+            {
+              searchPublications(
+                query: "AUTHOR:\\"${authorName}\\"",
+                first: ${resultLimit}
+              ) {
+                hits {
+                  id
+                  title
+                  authors {
+                    last_name
+                    first_name
+                  }
+                  doi
+                  times_cited
+                }
+              }
+            }
+            `;
+
+            try {
+                const response = await fetch('https://app.dimensions.ai/api/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({ query: graphqlQuery })
+                });
+
+                const data = await response.json();
+                processDimensionsData(data.data.searchPublications.hits);
+                updateSummaryTable('Dimensions', data.data.searchPublications.hits.length);
+            } catch (error) {
+                handleApiError('Dimensions', error);
+            }
+        }
+
+        function generateAuthorNameVariants(firstName, middleInitial, lastName) {
+            let variants = [];
+            let fullName = firstName + " " + (middleInitial ? middleInitial + " " : "") + lastName;
+            variants.push(fullName.trim()); // "Steffen E Petersen"
+            variants.push(lastName + " " + firstName.charAt(0) + (middleInitial ? middleInitial : "")); // "Petersen SE"
+            variants.push(lastName + " " + firstName); // "Petersen Steffen"
+            variants.push(lastName + ", " + firstName + " " + (middleInitial ? middleInitial : "")); // "Petersen, Steffen E"
+            return variants;
+        }
+
+        function getApiKeys() {
+            return {
+                altmetric: document.getElementById('altmetricApiKey').value,
+                plumx: document.getElementById('plumxApiKey').value,
+                dimensions: document.getElementById('dimensionsApiKey').value
+            };
+        }
+
+        function displayErrorMessage(message) {
+            const errorArea = document.getElementById('error-message-area'); // Create an element in your HTML
+            if (errorArea) {
+                errorArea.textContent = message;
+                errorArea.style.display = 'block'; // Make sure it's visible
+            } else {
+                alert(message); // Fallback if no error area
+            }
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function fetchWithDelay(url, options = {}, delayMs = 500) {
+            await delay(delayMs);
+            return fetchApiData(url, options);
+        }
+
+        async function searchAuthorNameVariants(firstName, middleInitial, lastName, resultLimit) {
+            const authorNameVariants = generateAuthorNameVariants(firstName, middleInitial, lastName);
+            const promises = authorNameVariants.map(async authorName => {
+                try {
+                    const euroPMCResults = await fetchEuroPMC(authorName, null, resultLimit);
+                    const crossRefResults = await fetchCrossRef(authorName, resultLimit);
+                    // Add other API calls here
+                    return { authorName, euroPMCResults, crossRefResults }; // Return results
+                } catch (error) {
+                    console.error(`Error searching for ${authorName}:`, error);
+                    displayErrorMessage(`Error searching for ${authorName}: ${error.message}`);
+                    return { authorName, error }; // Return error information
+                }
+            });
+
+            const results = await Promise.all(promises);
+
+            // Process the results (display in tables, etc.)
+            results.forEach(result => {
+                if (result.error) {
+                    console.warn(`Search for ${result.authorName} failed.`);
+                } else {
+                    console.log(`Results for ${result.authorName}:`, result);
+                    // Display results in appropriate tables
+                }
+            });
+        }
+
+        function getSearchQuery() {
+            return document.getElementById('searchQuery').value;
+        }
+
+        function getOrcidId() {
+            return document.getElementById('searchQuery').value; // Assuming you use the same field for both
+        }
+
+        function getResultLimit() {
+            return document.getElementById('resultLimit').value;
+        }
+
+        async function processDataCiteData(data) {
+            if (!data || data.length === 0) {
+                console.warn("No DataCite data received.");
+                return;
+            }
+
+            const processedData = data.map(item => ({
+                title: item.attributes.titles && item.attributes.titles.length > 0 ? item.attributes.titles[0].title : 'No Title',
+                authors: item.attributes.creators ? item.attributes.creators.map(creator => creator.name).join(', ') : 'No Authors',
+                year: item.attributes.publicationYear,
+                citations: 0,  // DataCite API does not directly provide citation counts. You might need another API.
+                doi: item.attributes.doi,
+                venue: item.attributes.publisher || 'No Publisher'
+            }));
+
+            displayDataCiteTable(processedData);
+        }
+
+        function displayDataCiteTable(data) {
+             const columns = [
+                { key: 'title', label: 'Title' },
+                { key: 'authors', label: 'Authors' },
+                { key: 'year', label: 'Year' },
+                { key: 'citations', label: 'Citations' },
+                { key: 'venue', label: 'Venue/DOI' } // Combined Venue and DOI
+            ];
+            createTable(data, 'datacite-table', columns); // Assuming you have a 'datacite-table' element.
+        }
+    </script>
+</body>
+</html>

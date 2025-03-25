@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
+  <title>The Adimension Codex Editoris | EHJIMP</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.2;
+      margin: 5px;
+      padding: 15px;
+    }
+    .article {
+      margin-top: 15px;
+      margin-bottom: 15px;
+      padding: 20px;
+      border-radius: 0;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.5),
+                  -5px -5px 15px rgba(255,255,255,0.7);
+    }
+    h1 {
+      color: #D43583;
+      margin-bottom: 10px;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    h2 {
+      color: #D43583;
+      padding: 10px;
+      font-size: 1.2em;
+    }
+    .button-download, .copy-button, .button {
+      margin: 5px;
+      padding: 5px;
+      background-color: #b30018;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9em;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .details, .meta {
+      margin: 10px;
+      font-size: 0.9em;
+      color: #555;
+      padding: 5px;
+    }
+    .meta {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .meta strong {
+      font-weight: bold;
+    }
+    .author-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px;
+      margin: 5px;
+    }
+    .author-name {
+      white-space: nowrap;
+    }
+    .linkedin {
+      background-color: #0077b5;
+      padding: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    .x-button {
+      background-color: #000;
+      padding: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    .open-access {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 5px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      display: inline-block;
+      margin: 5px;
+    }
+    a {
+      color: #b30018;
+      text-decoration: underline;
+    }
+    .abstract-header {
+      font-weight: bold;
+      color: #D43583;
+    }
+    .abstract-content {
+      margin: 10px;
+      padding: 10px;
+      font-size: 0.8em;
+    }
+    .abstract-container {
+      background-color: #f5f5f5;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 0.8em;
+    }
+    .embed-container {
+      display: flex;
+      gap: 5px;
+      margin: 5px;
+    }
+    .embed-container > div {
+      flex: 1;
+      padding: 5px;
+      background-color: transparent;
+    }
+    .social-post {
+      background-color: transparent;
+      padding: 10px;
+      margin: 5px;
+      font-size: 1em;
+      color: #D43583;
+      border: 1px solid gray;
+      font-weight: bold;
+      transition: transform 0.8s ease-in-out;
+    }
+    .social-post:hover {
+      transform: scale(1.01);
+    }
+    .search-container, #field-selection-form {
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+  <!-- External scripts for badges and metrics -->
+  <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script>
+  <script src="https://cdn.plu.mx/widget-popup.js"></script>
+</head>
+<body>
+  <h1>The Adimension Codex Editoris | EHJIMP</h1>
+  
+  <!-- Field Selection Form -->
+  <form id="field-selection-form">
+    <h2>Select Fields to Display:</h2>
+    <label><input type="checkbox" name="fields" value="title" checked> Title</label><br>
+    <label><input type="checkbox" name="fields" value="pdf" checked> PDF Download Link</label><br>
+    <label><input type="checkbox" name="fields" value="meta" checked> Meta Info (Issue, Volume, Pub Date, PMID, PMCID)</label><br>
+    <label><input type="checkbox" name="fields" value="keywords" checked> Keywords &amp; DOI</label><br>
+    <label><input type="checkbox" name="fields" value="authors" checked> Authors</label><br>
+    <label><input type="checkbox" name="fields" value="abstract" checked> Abstract</label><br>
+    <label><input type="checkbox" name="fields" value="social" checked> Social Media Post</label><br>
+    <label><input type="checkbox" name="fields" value="embed" checked> Embed Metrics</label><br>
+    <button type="button" onclick="generateHTML()">Generate</button>
+  </form>
+  
+  <!-- Optional: Search and Filter Section -->
+  <div class="search-container">
+    <label for="keyword">Search:</label>
+    <input type="text" id="keyword" placeholder="Enter keywords...">
+    <label for="start-date">From:</label>
+    <input type="date" id="start-date">
+    <label for="end-date">To:</label>
+    <input type="date" id="end-date">
+    <button onclick="filterArticles()">Filter</button>
+    <button onclick="resetFilters()">Reset</button>
+  </div>
+  
+  <!-- Container where articles will be rendered -->
+  <div id="articles-container"></div>
+  
+  <script>
+    // --- Utility Functions ---
+    // Reads selected fields from the form
+    function getSelectedFields() {
+      const checkboxes = document.querySelectorAll('#field-selection-form input[name="fields"]');
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+      return selected;
+    }
+    
+    // Clipboard copy function
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      });
+    }
+    
+    // --- Filtering Functions (unchanged) ---
+    function filterArticles() {
+      const keywordInput = document.getElementById('keyword').value.toLowerCase();
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+      const articles = document.querySelectorAll('.article');
+
+      articles.forEach(article => {
+        const abstract = article.querySelector('.abstract-content') ? article.querySelector('.abstract-content').textContent.toLowerCase() : "";
+        const details = article.querySelector('.details') ? article.querySelector('.details').textContent.toLowerCase() : "";
+        const title = article.querySelector('h2') ? article.querySelector('h2').textContent.toLowerCase() : "";
+        const pubDateMatch = article.querySelector('.meta') ? article.querySelector('.meta').textContent.match(/Published on\s([^<]*)/i) : null;
+        const pubDate = pubDateMatch ? pubDateMatch[1] : '';
+
+        let matchesKeyword = abstract.includes(keywordInput) || details.includes(keywordInput) || title.includes(keywordInput);
+        let matchesDate = true;
+        if (startDate && endDate) {
+          matchesDate = pubDate >= startDate && pubDate <= endDate;
+        }
+        article.style.display = (matchesKeyword && matchesDate) ? '' : 'none';
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('keyword').value = '';
+      document.getElementById('start-date').value = '';
+      document.getElementById('end-date').value = '';
+      document.querySelectorAll('.article').forEach(article => {
+        article.style.display = '';
+      });
+    }
+    
+    // Generates a social media post for a given title and first author's last name
+    function generateSocialMediaPost(title, firstAuthorLastName) {
+      const templates = [
+        `'${title}' by ${firstAuthorLastName} et al. brings a fresh perspective to #CVImaging. Read it now in #EHJIMP!`,
+        `Explore '${title}' by ${firstAuthorLastName} et al., redefining innovation in cardiovascular research. Discover more in #EHJIMP.`,
+        `'${title}'—an essential read from ${firstAuthorLastName} et al., showcasing cutting-edge science in #EHJIMP!`,
+        `Innovative research alert: '${title}' by ${firstAuthorLastName} et al. is now available in #EHJIMP.`,
+        `Leading the way in #CVImaging: '${title}' by ${firstAuthorLastName} et al., featured in #EHJIMP.`,
+        `Explore '${title}', the latest in groundbreaking research by ${firstAuthorLastName} et al. Read it in #EHJIMP!`,
+        `Don't miss the study '${title}' by ${firstAuthorLastName} et al., a key contribution to cardiovascular science. Now in #EHJIMP!`,
+        `${firstAuthorLastName} et al. present impactful findings in '${title}'. Read this important study in #EHJIMP.`,
+        `New in #EHJIMP: '${title}' by ${firstAuthorLastName} et al., offering novel insights into imaging science.`,
+        `Highlighting '${title}'—${firstAuthorLastName} et al. reveal transformative discoveries in #EHJIMP.`
+      ];
+      return templates[Math.floor(Math.random() * templates.length)];
+    }
+    
+    // --- Modular HTML Generation ---
+    // Called when the "Generate" button is clicked
+    function generateHTML() {
+      const selectedFields = getSelectedFields();
+      // Clear the articles container
+      document.getElementById('articles-container').innerHTML = "";
+      // Fetch articles using the selected fields
+      fetchArticles(selectedFields);
+    }
+    
+    // Fetch articles from the API and render them using the provided selectedFields array
+    async function fetchArticles(selectedFields) {
+      const apiUrl = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=JOURNAL%3A"Eur%20Heart%20J%20Imaging%20Methods%20Pract"&resultType=core&pageSize=1000&sort=P_PDATE_D%20desc&format=json';
+      try {
+        console.log("Fetching data from API...");
+        const response = await fetch(apiUrl);
+        console.log("Response received with status code:", response.status);
+        const data = await response.json();
+        const articles = data.resultList && data.resultList.result ? data.resultList.result : [];
+        console.log(`Number of articles fetched: ${articles.length}`);
+        const container = document.getElementById('articles-container');
+
+        articles.forEach(article => {
+          // Extract common fields
+          const title = article.title || 'No Title';
+          const abstract = article.abstractText ? article.abstractText.replace(/\n/g, ' ').trim() : 'No Abstract Available';
+          const keywords = article.keywordList && article.keywordList.keyword ? article.keywordList.keyword.join(', ') : '';
+          const doi = article.doi || null;
+          const doi_url = doi ? 'https://doi.org/' + doi : '#';
+          const links = article.fullTextUrlList && article.fullTextUrlList.fullTextUrl ? article.fullTextUrlList.fullTextUrl : [];
+          const issue = article.journalInfo && article.journalInfo.issue ? article.journalInfo.issue : 'N/A';
+          const volume = article.journalInfo && article.journalInfo.volume ? article.journalInfo.volume : 'N/A';
+          const pub_date = article.journalInfo && article.journalInfo.printPublicationDate ? article.journalInfo.printPublicationDate : 'Unknown Date';
+          const pmid = article.pmid || 'N/A';
+          const pmcid = article.pmcid || 'N/A';
+          const is_open_access = article.isOpenAccess === 'Y';
+
+          // Process authors
+          const authors = article.authorList && article.authorList.author ? article.authorList.author : [];
+          const firstAuthorLastName = authors.length ? (authors[0].lastName || 'Unknown') : 'Unknown';
+          let authorRows = '';
+          authors.forEach(author => {
+            const firstName = author.firstName || '';
+            const lastName = author.lastName || '';
+            const fullName = (firstName + ' ' + lastName).trim();
+            const linkedinLink = 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(fullName);
+            const xLink = 'https://twitter.com/search?q=' + encodeURIComponent(fullName);
+            authorRows += `
+              <span class="author-row">
+                <span class="author-name">${fullName}</span>
+                <a href="${linkedinLink}" target="_blank" class="button linkedin">In</a>
+                <a href="${xLink}" target="_blank" class="button x-button">X</a>
+              </span>
+            `;
+          });
+
+          // Get PDF link if available
+          let pdf_url = '#';
+          if (links.length) {
+            const pdfLink = links.find(link => link.documentStyle === 'pdf');
+            if (pdfLink && pdfLink.url) {
+              pdf_url = pdfLink.url;
+            }
+          }
+          
+          // Generate social media post
+          const social_post = generateSocialMediaPost(title, firstAuthorLastName);
+          
+          // Build article HTML conditionally based on selected fields
+          let articleHTML = `<div class="article">`;
+          if (selectedFields.includes("title")) {
+            articleHTML += `<h2>${title}</h2>`;
+          }
+          if (selectedFields.includes("pdf")) {
+            articleHTML += `<div><a href="${pdf_url}" target="_blank" class="button-download">Download PDF if PMCID is assigned</a></div>`;
+          }
+          if (selectedFields.includes("meta")) {
+            articleHTML += `<div class="meta">
+              ${is_open_access ? '<span class="open-access">Open Access</span>' : ''}
+              <strong>Issue</strong> ${issue}
+              <strong>Vol</strong> ${volume}
+              <strong>Published on</strong> ${pub_date}
+              <strong>PMID</strong> ${pmid}
+              <strong>PMCID</strong> ${pmcid}
+            </div>`;
+          }
+          if (selectedFields.includes("keywords")) {
+            articleHTML += `<div class="details">
+              <strong>Keywords:</strong> ${keywords}<br>
+              <strong>DOI:</strong> <a href="${doi_url}" target="_blank">${doi_url}</a>
+              <button class="copy-button" onclick="copyToClipboard('${doi_url}')">Copy DOI</button>
+            </div>`;
+          }
+          if (selectedFields.includes("authors")) {
+            articleHTML += `<div class="details"><strong>Authors:</strong> ${authorRows}</div>`;
+          }
+          if (selectedFields.includes("abstract")) {
+            articleHTML += `<div class="abstract-container">
+              <span class="abstract-header">Abstract:</span>
+              <span class="abstract-content">${abstract}</span>
+            </div>`;
+          }
+          if (selectedFields.includes("social")) {
+            articleHTML += `<div class="social-post">
+              <strong>Social Media Post:</strong><br>
+              ${social_post}
+              <button class="copy-button" onclick="copyToClipboard(\`${social_post}\`)">Copy Text</button>
+            </div>`;
+          }
+          if (selectedFields.includes("embed")) {
+            articleHTML += `<div class="embed-container">
+              <div>
+                <span class="__dimensions_badge_embed__" data-pmid="${pmid}" data-legend="always"></span>
+                <script async src="https://badge.dimensions.ai/badge.js" charset="utf-8"><\/script>
+              </div>
+              <div>
+                <div data-badge-details="right" data-badge-type="medium-donut" data-doi="${doi}" data-legend="always"
+                     data-condensed="true" data-hide-no-mentions="false" class="altmetric-embed"></div>
+              </div>
+              <div class="embed-container">
+                <a href="https://plu.mx/plum/a/?doi=${doi}" data-popup="top" data-badge="true"
+                   class="plumx-plum-print-popup" data-site="plum">
+                  <svg viewBox="0 0 100 100" width="75" height="75">
+                    <path fill="#6e1a62" stroke="#6e1a62" stroke-width="1" 
+                      d="M 36.075524746876404,57.96956599135724 C 47.24224000477168,47.68596460512846 53.05297314616313,51.90770935123954 46.72339182284403,65.70569425459581 L 53.27660817715597,65.70569425459581 C 46.94702685383687,51.90770935123954 54.11916130196383,46.54361327076243 66.73225377367403,64.96794365950129 L 72.33461419729612,47.7256512143974 C 51.300858350195114,55.217457868193435 48.651416263702714,46.662138123559565 61.88240715909315,39.21976840364822 L 56.58074376063895,35.36788447550181 C 53.59123058093537,50.25112330547885 45.221755705838305,50.334127390178 44.7288145302294,30.470688282908622 L 33.05540672336235,38.951915501347315 C 51.79433272187257,45.55887066943854 49.12908117584119,53.493064614593585 34.05046952557818,51.73708687489691 Z">
+                    </path>
+                    <circle fill="#6e1a62" stroke="#6e1a62" stroke-width="1" r="4" 
+                      cx="32.880982706687234" cy="55.56230589874905"></circle>
+                    <circle fill="#6e1a62" stroke="#6e1a62" stroke-width="1" r="4" 
+                      cx="50" cy="68"></circle>
+                    <circle fill="#c43bf3" stroke="#6e1a62" stroke-width="1" r="11.066089190457772" 
+                      cx="75.57002555852411" cy="58.30820493714331"></circle>
+                    <circle fill="none" stroke="#ffffff" stroke-width="1.5" r="9.566089190457772" 
+                      cx="75.57002555852411" cy="58.30820493714331"></circle>
+                    <circle fill="#6e1a62" stroke="#6e1a62" stroke-width="1" r="4" 
+                      cx="60.58013454126452" cy="35.43769410125095"></circle>
+                    <circle fill="#fd5704" stroke="#6e1a62" stroke-width="1" r="8.807354922057604" 
+                      cx="35.92280101098581" cy="30.62439782064578"></circle>
+                    <circle fill="none" stroke="#ffffff" stroke-width="1.5" r="7.307354922057604" 
+                      cx="35.92280101098581" cy="30.62439782064578"></circle>
+                  </svg>
+                  <strong>PLUM X</strong> Metrics
+                </a>
+              </div>
+            </div>`;
+          }
+          
+          articleHTML += `</div>`;
+          container.innerHTML += articleHTML;
+        });
+      } catch (error) {
+        console.error("An error occurred while fetching articles:", error);
+      }
+    }
+  </script>
+</body>
+</html>

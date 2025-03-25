@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interdimensional Relational Map</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #121212; color: white; font-family: Arial, sans-serif; }
+        svg { width: 100vw; height: 100vh; }
+        .node circle { fill-opacity: 0.8; cursor: move; }
+        .node text { pointer-events: none; fill: #fff; font-size: 14px; }
+        .link { stroke-opacity: 0.6; stroke-width: 2px; }
+    </style>
+</head>
+<body>
+    <svg></svg>
+    <script>
+        console.log("Initializing Interdimensional Relational Map...");
+        const width = window.innerWidth, height = window.innerHeight;
+        const svg = d3.select("svg").attr("width", width).attr("height", height);
+
+        const simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id).distance(200))
+            .force("charge", d3.forceManyBody().strength(-400))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        const colorScale = d3.scaleOrdinal(["#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#FFD733", "#A833FF", "#33FFF5", "#FF8C33", "#8C33FF", "#33FF8C"]);
+
+        let graph = {
+            nodes: [
+                { id: "The Adimension", group: 1 },
+                { id: "DEITY Principles Framework", group: 1 },
+                { id: "DATA", group: 2 },
+                { id: "ETHICS", group: 2 },
+                { id: "INFORMATICS", group: 2 },
+                { id: "TECHNOLOGY", group: 2 },
+                { id: "MACHINE & HUMAN OPERATIONS", group: 3 },
+                { id: "Sources", group: 4 },
+                { id: "Access", group: 4 },
+                { id: "Data Integration", group: 4 },
+                { id: "Automation", group: 4 },
+                { id: "Resources", group: 4 },
+                { id: "Practice", group: 4 },
+                { id: "Networking", group: 5 },
+                { id: "Research", group: 5 },
+                { id: "Sustainability", group: 5 },
+                { id: "Interpretation", group: 5 },
+                { id: "Implementation", group: 5 },
+                { id: "Inspiration", group: 5 }
+            ],
+            links: [
+                { source: "The Adimension", target: "DEITY Principles Framework" },
+                { source: "DEITY Principles Framework", target: "DATA" },
+                { source: "DEITY Principles Framework", target: "ETHICS" },
+                { source: "DEITY Principles Framework", target: "INFORMATICS" },
+                { source: "DEITY Principles Framework", target: "TECHNOLOGY" },
+                { source: "DEITY Principles Framework", target: "MACHINE & HUMAN OPERATIONS" },
+                { source: "DATA", target: "Sources" },
+                { source: "ETHICS", target: "Access" },
+                { source: "INFORMATICS", target: "Data Integration" },
+                { source: "TECHNOLOGY", target: "Automation" },
+                { source: "MACHINE & HUMAN OPERATIONS", target: "Resources" },
+                { source: "MACHINE & HUMAN OPERATIONS", target: "Practice" },
+                { source: "DATA", target: "Networking" },
+                { source: "ETHICS", target: "Research" },
+                { source: "INFORMATICS", target: "Sustainability" },
+                { source: "TECHNOLOGY", target: "Interpretation" },
+                { source: "MACHINE & HUMAN OPERATIONS", target: "Implementation" },
+                { source: "MACHINE & HUMAN OPERATIONS", target: "Inspiration" }
+            ]
+        };
+
+        const link = svg.append("g").selectAll(".link")
+            .data(graph.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .style("stroke", "#bbb");
+
+        const node = svg.append("g").selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        node.append("circle")
+            .attr("r", 10)
+            .style("fill", d => colorScale(d.group));
+
+        node.append("text")
+            .attr("dy", -15)
+            .attr("text-anchor", "middle")
+            .text(d => d.id)
+            .style("fill", "#fff");
+
+        simulation
+            .nodes(graph.nodes)
+            .on("tick", ticked);
+
+        simulation.force("link")
+            .links(graph.links);
+
+        function ticked() {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("transform", d => `translate(${d.x}, ${d.y})`);
+        }
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        console.log("Interdimensional Relational Map Loaded Successfully.");
+    </script>
+</body>
+</html>

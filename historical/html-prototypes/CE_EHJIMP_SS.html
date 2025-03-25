@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EHJIMP Articles Excel Export</title>
+  <!-- Load SheetJS (xlsx) library from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #status { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>EHJIMP Articles Excel Export</h1>
+  <button id="fetchButton">Fetch Data and Generate Excel</button>
+  <p id="status"></p>
+
+  <script>
+    document.getElementById('fetchButton').addEventListener('click', fetchDataAndExport);
+
+    async function fetchDataAndExport() {
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = "Fetching data from API...";
+      
+      const url = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=JOURNAL%3A"Eur%20Heart%20J%20Imaging%20Methods%20Pract"&resultType=core&pageSize=1000&sort=P_PDATE_D desc&format=json';
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          statusEl.textContent = "Failed to fetch data. Status Code: " + response.status;
+          return;
+        }
+        const data = await response.json();
+        const articles = (data.resultList && data.resultList.result) ? data.resultList.result : [];
+        statusEl.textContent = "Number of articles fetched: " + articles.length;
+        
+        // Social media post templates
+        const social_media_templates = [
+          "'{title}' by {last_name} et al. brings a fresh perspective to #CVImaging. Read it now in #EHJIMP!",
+          "Explore '{title}' by {last_name} et al., redefining innovation in cardiovascular research. Discover more in #EHJIMP.",
+          "'{title}'—an essential read from {last_name} et al., showcasing cutting-edge science in #EHJIMP!",
+          "Innovative research alert: '{title}' by {last_name} et al. is now available in #EHJIMP.",
+          "Leading the way in #CVImaging: '{title}' by {last_name} et al., featured in #EHJIMP.",
+          "Explore '{title}', the latest in groundbreaking research by {last_name} et al. Read it in #EHJIMP!",
+          "Don't miss the study '{title}' by {last_name} et al., a key contribution to cardiovascular science. Now in #EHJIMP!",
+          "{last_name} et al. present impactful findings in '{title}'. Read this important study in #EHJIMP.",
+          "New in #EHJIMP: '{title}' by {last_name} et al., offering novel insights into imaging science.",
+          "Highlighting '{title}'—{last_name} et al. reveal transformative discoveries in #EHJIMP.",
+          "Discover how '{title}' by {last_name} et al. is shaping the future of imaging research. Read in #EHJIMP!",
+          "Exciting research from {last_name} et al.: '{title}' explores new dimensions in #CVImaging. Featured in #EHJIMP.",
+          "Explore the paradigm-shifting study '{title}' by {last_name} et al., now in #EHJIMP!",
+          "Revolutionizing #CVImaging: {last_name} et al. unveil '{title}' in #EHJIMP.",
+          "Stay at the forefront of cardiovascular science: Read '{title}' by {last_name} et al., now in #EHJIMP!",
+          "Discover cutting-edge insights in '{title}'. {last_name} et al. present their latest findings in #EHJIMP!",
+          "The latest research by {last_name} et al. explores '{title}'. Dive deeper in #EHJIMP!",
+          "Explore the groundbreaking study '{title}' by {last_name} et al., now featured in #EHJIMP.",
+          "Exciting developments in #CVImaging: '{title}' by {last_name} et al. Read more in #EHJIMP!",
+          "'{title}'—a must-read study by {last_name} et al., pushing the boundaries of knowledge in #EHJIMP!",
+          "Delve into the latest advancements in '{title}'. {last_name} et al. share groundbreaking findings in #EHJIMP!",
+          "New insights unveiled by {last_name} et al. in '{title}'. Discover the details in #EHJIMP!",
+          "Check out the innovative study '{title}' by {last_name} et al., now spotlighted in #EHJIMP.",
+          "Significant strides in #CVImaging: '{title}' authored by {last_name} et al. Explore more in #EHJIMP!",
+          "'{title}'—a pivotal contribution by {last_name} et al., expanding horizons in #EHJIMP!",
+          "Uncover pioneering research in '{title}' by {last_name} et al. Read more in #EHJIMP!",
+          "Discover how {last_name} et al. are advancing the field with '{title}', now featured in #EHJIMP!",
+          "The study '{title}' by {last_name} et al. offers fresh perspectives in #CVImaging. Explore it in #EHJIMP!",
+          "Breaking new ground in imaging science: '{title}' by {last_name} et al., highlighted in #EHJIMP!",
+          "Transformative research '{title}' by {last_name} et al. is shaping the future of #CVImaging. Learn more in #EHJIMP!",
+          "New research in #EHJIMP: '{title}' by {last_name} et al.",
+          "Latest insights: '{title}' by {last_name} et al. in #EHJIMP.",
+          "Read '{title}' by {last_name} et al. in #EHJIMP now!",
+          "Exciting study! '{title}' by {last_name} et al. in #EHJIMP.",
+          "Breakthrough research: '{title}' by {last_name} et al. in #EHJIMP!",
+          "Big news! '{title}' by {last_name} et al. just published in #EHJIMP.",
+          "Game-changing study: '{title}' by {last_name} et al. in #EHJIMP.",
+          "Must-read: '{title}' by {last_name} et al. in #EHJIMP.",
+          "Fresh insights! '{title}' by {last_name} et al. in #EHJIMP.",
+          "Check out '{title}' by {last_name} et al. in #EHJIMP!",
+          "Curious about imaging? Read '{title}' by {last_name} et al. in #EHJIMP.",
+          "New perspectives: '{title}' by {last_name} et al. in #EHJIMP.",
+          "'{title}' by {last_name} et al. offers key insights—#EHJIMP.",
+          "Breaking new ground: '{title}' by {last_name} et al. in #EHJIMP.",
+          "Fresh off the press: '{title}' by {last_name} et al. in #EHJIMP.",
+          "Latest contribution to #CVImaging: '{title}' by {last_name} et al. in #EHJIMP.",
+          "Examining the findings in '{title}' by {last_name} et al., now published in #EHJIMP.",
+          "Exciting developments in #CVImaging! '{title}' by {last_name} et al. is now in #EHJIMP.",
+          "Major progress in the field! '{title}' by {last_name} et al. is making an impact in #EHJIMP.",
+          "A must-read for imaging enthusiasts! '{title}' by {last_name} et al. is now available in #EHJIMP.",
+          "Big news in #CVImaging! '{title}' by {last_name} et al. is in #EHJIMP.",
+          "Key findings from '{title}' by {last_name} et al. now published in #EHJIMP.",
+          "Exciting research ahead! '{title}' by {last_name} et al. is featured in #EHJIMP.",
+          "Breakthrough insights: '{title}' by {last_name} et al. is now in #EHJIMP.",
+          "Let’s discuss! '{title}' by {last_name} et al. offers key insights in #EHJIMP. Thoughts?",
+          "What do you think about '{title}' by {last_name} et al.? Read it now in #EHJIMP and share your views!",
+          "Join the conversation on '{title}' by {last_name} et al., now in #EHJIMP. Let’s explore the findings together!"
+        ];
+        
+        // Prepare article data with header row
+        const articleData = [];
+        articleData.push([
+          "Title", "Abstract", "PMID",
+          "First Author", "Last Author",
+          "First Author X Link", "First Author LinkedIn Link",
+          "Last Author X Link", "Last Author LinkedIn Link",
+          "All Authors", "DOI Link", "PDF Download Link", "Social Media Post"
+        ]);
+        
+        // Process each article
+        articles.forEach(article => {
+          const title = article.title || "No Title";
+          const abstract = article.abstractText ? article.abstractText.replace(/\n/g, ' ').trim() : "No Abstract Available";
+          const pmid = article.pmid || "N/A";
+          
+          // Extract authors and build names/links
+          let first_author_name = "Unknown", last_author_name = "Unknown", first_author_last_name = "Unknown", all_authors = "Unknown";
+          let first_author_x = "N/A", first_author_linkedin = "N/A", last_author_x = "N/A", last_author_linkedin = "N/A";
+          const authors = (article.authorList && article.authorList.author) ? article.authorList.author : [];
+          if (authors.length) {
+            first_author_name = ((authors[0].firstName || "") + " " + (authors[0].lastName || "")).trim();
+            last_author_name = ((authors[authors.length - 1].firstName || "") + " " + (authors[authors.length - 1].lastName || "")).trim();
+            first_author_last_name = authors[0].lastName || "Unknown";
+            all_authors = authors.map(author => {
+              return ((author.firstName || "") + " " + (author.lastName || "")).trim();
+            }).join("; ");
+            first_author_x = "https://twitter.com/search?q=" + encodeURIComponent(first_author_name);
+            first_author_linkedin = "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(first_author_name);
+            last_author_x = "https://twitter.com/search?q=" + encodeURIComponent(last_author_name);
+            last_author_linkedin = "https://www.linkedin.com/search/results/people/?keywords=" + encodeURIComponent(last_author_name);
+          }
+          
+          // Generate DOI link
+          const doi_url = article.doi ? "https://doi.org/" + article.doi : "N/A";
+          
+          // Get PDF download link if available
+          let pdf_url = "N/A";
+          if (article.fullTextUrlList && article.fullTextUrlList.fullTextUrl) {
+            const pdfLink = article.fullTextUrlList.fullTextUrl.find(link => link.documentStyle === 'pdf');
+            if (pdfLink && pdfLink.url) {
+              pdf_url = pdfLink.url;
+            }
+          }
+          
+          // Generate a random social media post using the first author's last name
+          const randomTemplate = social_media_templates[Math.floor(Math.random() * social_media_templates.length)];
+          const social_media_post = randomTemplate.replace("{title}", title).replace("{last_name}", first_author_last_name);
+          
+          // Append row data
+          articleData.push([
+            title, abstract, pmid,
+            first_author_name, last_author_name,
+            first_author_x, first_author_linkedin,
+            last_author_x, last_author_linkedin,
+            all_authors, doi_url, pdf_url, social_media_post
+          ]);
+        });
+        
+        // Create a workbook and add the data as a worksheet
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(articleData);
+        XLSX.utils.book_append_sheet(wb, ws, "Articles");
+        
+        // Generate and download the Excel file
+        XLSX.writeFile(wb, "EHJIMP_Articles.xlsx");
+        statusEl.textContent = "Excel file 'EHJIMP_Articles.xlsx' generated successfully!";
+        
+      } catch (error) {
+        statusEl.textContent = "An error occurred: " + error;
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>

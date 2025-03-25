@@ -2,10 +2,6 @@
 
 A human-machine interoperable platform for transforming scientific literature into semantically enriched, actionable datasets that benefit researchers, clinicians, patients, and machine learning models.
 
-<p align="center">
-  <img src="docs/images/logo.png" alt="The Adimension Codex Editoris" width="200"/>
-</p>
-
 ## Adimensional Intelligence
 
 Codex Editoris embodies The Adimension's vision of transcending rigid dimensional constraints in scientific research. By transforming academic publications into a human-machine operable state, it enables what we call "Adimensional Intelligence" — an intelligence that continuously adapts, evolves, and harmonizes machine capabilities with human ingenuity.
